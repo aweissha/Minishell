@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/02/19 16:15:30 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/02/20 14:44:02 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,19 +21,15 @@
 
 typedef enum
 {
-	PCOMMAND,
 	COMMAND,
 	OPTN,
 	ARG,
-	REDIR,
+	BUILDIN,
+	REDINPT,
+	REDOUPT,
+	REDAPPND,
 	PIPE,
 }	token_type;
-
-typedef struct	s_token
-{
-	token_type	tok_type;
-	char		*tok_str;
-}	t_token;
 
 typedef struct s_data
 {
@@ -41,8 +37,8 @@ typedef struct s_data
 	char 		**argv;
 	char 		**env;
 	int			nb_tokens;
-	t_token		*tokens;
-	// int		nb_pipes;
+	char		**tokens;
+	int			nb_pipes;
 	// int		nb_commands;
 }	t_data;
 

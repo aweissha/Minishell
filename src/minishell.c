@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:42:48 by aweissha          #+#    #+#             */
-/*   Updated: 2024/02/19 17:17:13 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/02/20 10:25:28 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 void	handle_input(char *input, t_data *data)
 {
 	parse_input(input, data);
+	
+	
 
 }
 
@@ -53,7 +55,6 @@ int	main(int argc, char **argv, char **env)
 
 // Plan:
 /*
-- learn typedef enum
 - learn about how to code my own shell
 
 

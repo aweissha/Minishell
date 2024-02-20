@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 13:33:18 by aweissha          #+#    #+#             */
-/*   Updated: 2024/02/16 13:53:34 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/02/20 14:48:24 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,8 @@ t_data	*init_data(int argc, char **argv, char **env)
 	data->argc = argc;
 	data->argv = argv;
 	data->env = env;
+	data->nb_pipes = 0;
+	data->nb_tokens = 0;
+	data->tokens = NULL;
 	return (data);
 }
