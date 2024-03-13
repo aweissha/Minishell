@@ -1,19 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/16 13:49:04 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/11 12:30:36 by aweissha         ###   ########.fr       */
+/*   Created: 2024/03/13 13:24:09 by aweissha          #+#    #+#             */
+/*   Updated: 2024/03/13 13:29:45 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void	ft_error(char *message, int code)
+int	ft_fork(void)
 {
-	perror(message);
-	exit(code);
+	int	id;
+	
+	id = fork();
+	if (id == -1)
+		ft_error("fork() failed", errno);
+	return (id);
 }

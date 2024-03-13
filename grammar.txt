@@ -1,0 +1,44 @@
+Grammar of bash scripts for Minishell:
+
+<pipe_sequence> ::= <simple_command>
+									| <pipe_sequence> PIPE <simple_command>
+									;
+
+<simple_command> ::= <cmd_prefix> <cmd> <cmd_suffix>
+													| <cmd>
+													| <cmd> <cmd_suffix>
+													| <cmd_prefix> <cmd>
+													;
+
+<cmd> ::= <cmd_name> <cmd_opt> <cmd_arg>
+										| <cmd_name>
+										| <cmd_name> <cmd_arg>
+										;
+
+<cmd_name> ::= WORD;
+
+<cmd_optn> ::= '-'WORD;
+
+<cmd_arg> ::= WORD;
+
+<cmd_prefix> ::= <infile> <io_redirect>
+										| <io_redirect> <infile>
+										| <heredoc> <LIMITER>
+										;
+
+<cmd_suffix> ::= <outfile> <io_redirect>
+										| <io_redirect> <outfile>
+										;
+
+<io_redirect> ::= '<'
+					| '>'
+					| '>>'
+
+<heredoc> ::= '<<';
+
+<LIMITER> ::= WORD;
+
+<infile> ::= WORD;
+
+<outfile> ::= WORD;
+
