@@ -6,38 +6,26 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/02/16 14:30:46 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/15 14:16:28 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	main(void)
+int	main(int argc, char **argv, char **env)
 {
-	char *input;
+	t_data	*data;
+	t_token	*tmp;
+	char	*input;
 
-	input = NULL;
-	while (1)
+	input = readline("Minishell $> ");
+	data = init_data(argc, argv, env);
+	lexer(input, data);
+
+	tmp = data->tokens;
+	while (tmp != NULL)
 	{
-		input = readline("Enter some blablabla: ");
-		if (input == NULL)
-		{
-            printf("\n");
-            break;
-        }
-        // // Handle user input
-        // else if (ft_strcmp(input, "exit") == 0)
-		// {
-        //     free(input);
-        //     break;
-        // } 
-		else if (ft_strlen(input) == 0)
-			free(input);
-		else
-		{
-            // Process user input here
-            printf("You entered: %s\n", input);
-            free(input);
-        }
+		printf("type: %u\ntoken_str: %s\n", tmp->type, tmp->token);
+		tmp = tmp->next;
 	}
 }

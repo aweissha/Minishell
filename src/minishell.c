@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:42:48 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/13 18:41:53 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/15 14:27:11 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ t_node	*parse_input(char *input, t_data *data)
 {
 	t_node	*parse_tree;
 
+	check_syntax(input);
 	lexer(input, data);
 	parse_tree = parse_pipe(data);
 
@@ -119,9 +120,10 @@ int	main(int argc, char **argv, char **env)
 			if (ft_fork() == 0)
 				run_commands(parse_input(input, data));
 			wait(NULL);
+			free(input);
 		}
 	}
-	// free(data);
+	free(data);
 }
 
 

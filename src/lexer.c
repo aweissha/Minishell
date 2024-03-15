@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 14:24:02 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/13 18:44:46 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/15 18:25:20 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,30 +62,74 @@
 // 	return (1);
 // }
 
-void	add_tok_types(t_data *data)
+type	tok_type(char *token)
 {
-	int	i;
-
-	i = 0;
-	while (i < data->nb_tokens)
-	{
-		if (ft_strcmp(data->tokens[i].token, "<") == 0)
-			data->tokens[i].type = REDINPT;
-		else if (ft_strcmp(data->tokens[i].token, ">") == 0)
-			data->tokens[i].type = REDOUT;
-		else if (ft_strcmp(data->tokens[i].token, ">>") == 0)
-			data->tokens[i].type = REDAPPND;
-		else if (ft_strcmp(data->tokens[i].token, "<<") == 0)
-			data->tokens[i].type = HEREDOC;
-		else if (ft_strcmp(data->tokens[i].token, "|") == 0)
-			data->tokens[i].type = PIPE;
-		else if (is_buildin(data->tokens[i].token) == 1)
-			data->tokens[i].type = BUILDIN;
-		i++;
-	}
+	if (ft_strcmp(token, "<") == 0)
+		return (REDINPT);
+	else if (ft_strcmp(token, ">") == 0)
+		return (REDOUT);
+	else if (ft_strcmp(token, ">>") == 0)
+		return (REDAPPND);
+	else if (ft_strcmp(token, "<<") == 0)
+		return (HEREDOC);
+	else if (ft_strcmp(token, "|") == 0)
+		return (PIPE);
+	else
+		return (WORD);
 }
 
-char	*ft_strtok(char *str, const char *sep)
+int	quotes_left(char *start, char *position, char c)
+{
+	int	quote_count;
+
+	quote_count = 0;
+	position--;
+	while (position >= start)
+	{
+		if (*position == c)
+			quote_count++;
+		position--;
+	}
+	return (quote_count);
+}
+
+int	quotes_right(char *start, char *position, char c)
+{
+	int	quote_count;
+
+	quote_count = 0;
+	position++;
+	while (*position !='\0')
+	{
+		if (*position == c)
+			quote_count++;
+		position++;
+	}
+	return (quote_count);
+}
+
+int	in_quotes(char *start, char *position)
+{
+	if ((quotes_left(start, position, 34) % 2) == 1 
+		&& quotes_right(start, position, 34) > 0 
+		&& *position != 34)
+		return (1);
+	else if ((quotes_left(start, position, 39) % 2) == 1 
+		&& quotes_right(start, position, 39) > 0 
+		&& *position != 39)
+		return (1);	
+	else if (*position == 34 && (quotes_left(start, position, 34) % 2) == 1)
+		return (1);
+	else if (*position == 39 && (quotes_left(start, position, 39) % 2) == 1)
+		return (1);
+	else if (*position == 34 && (quotes_right(start, position, 34) > 0))
+		return (1);
+	else if (*position == 39 && (quotes_right(start, position, 39) > 0))
+		return (1);
+	return (0);
+}
+
+char	*ft_strtok_mod(char *str, const char *sep)
 {
 	static char	*position;
 	char		*token_start;
@@ -102,51 +146,80 @@ char	*ft_strtok(char *str, const char *sep)
 		return (NULL);
 	}
 	token_start = position;
-	while (ft_strchr(sep, *position) == NULL && *position != '\0')
+	while ((ft_strchr(sep, *position) == NULL && *position != '\0')
+		|| (in_quotes(token_start, position) == 1 && *position != '\0'))
 		position++;
 	if (*position != '\0')
-	{
-		*position = '\0';
-		position++;
-	}
+		*(position)++ = '\0';
 	else
 		position = NULL;
-	return (token_start);
+	return (ft_strtrim(token_start, "\"\'"));
 }
 
-int	count_tokens(char *s, char c)
-{
-	unsigned int	counter;
-	unsigned int	i;
+// int	count_tokens(char *s, char c)
+// {
+// 	unsigned int	counter;
+// 	unsigned int	i;
 
-	i = 0;
-	counter = 0;
-	while (s[i] != '\0')
+// 	i = 0;
+// 	counter = 0;
+// 	while (s[i] != '\0')
+// 	{
+// 		i++;
+// 		if (((s[i] == c || s[i] == '\0') && s[i - 1] != c))
+// 			counter++;
+// 	}
+// 	return (counter);
+// }
+
+t_token	*ft_toknew(char *token_str, type token_type)
+{
+	t_token	*token_node;
+
+	token_node = malloc(sizeof(t_token));
+	if (token_node == NULL)
+		ft_error("Memory allocation for token list failed", errno);
+	token_node->token = token_str;
+	token_node->type = token_type;
+	token_node->next = NULL;
+	token_node->previous = NULL;
+	return (token_node);
+}
+
+t_token	*ft_toklast(t_token *token_list)
+{
+	if (token_list == NULL)
+		return (NULL);
+	while (token_list->next != NULL)
+		token_list = token_list->next;
+	return (token_list);
+}
+
+void	ft_tokadd_back(t_token **token_list, t_token *new)
+{
+	t_token	*last;
+
+	if (token_list && new)
 	{
-		i++;
-		if (((s[i] == c || s[i] == '\0') && s[i - 1] != c))
-			counter++;
+		if (*token_list)
+		{
+			last = ft_toklast(*token_list);
+			last->next = new;
+			last->next->previous = last;
+		}
+		else
+			*token_list = new;
 	}
-	return (counter);
 }
 
 void	lexer(char *input, t_data *data)
 {
 	char	*token;
-	int		i;
 
-	data->nb_tokens = count_tokens(input, ' ');
-	data->tokens = malloc(sizeof(t_token) * (data->nb_tokens));
-	if (data->tokens == NULL)
-		ft_error("Memory allocation of token array failed", errno);
-	token = ft_strtok(input, " ");
-	i = 0;
+	token = ft_strtok_mod(input, " ");
 	while (token != NULL)
 	{
-		data->tokens[i].token = ft_strdup(token);
-		token = ft_strtok(NULL, " ");
-		i++;
+		ft_tokadd_back(&data->tokens, ft_toknew(token, tok_type(token)));
+		token = ft_strtok_mod(NULL, " ");
 	}
-	free(input);
-	add_tok_types(data->tokens);
 }

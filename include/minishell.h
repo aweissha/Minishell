@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/13 18:35:43 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/15 12:35:57 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,46 +21,51 @@
 #include "../libft/libft.h"
 
 
-typedef enum
-{
-	EXEC,
-	BUILDIN,
-	REDIR,
-	PIPE,
-}	node_type;
+// typedef enum
+// {
+// 	EXEC,
+// 	BUILDIN,
+// 	REDIR,
+// 	PIPE,
+// }	type;
 
 typedef enum
 {
 	WORD,
+	EXEC,
 	BUILDIN,
+	REDIR,
 	REDINPT,
 	REDOUT,
 	REDAPPND,
 	HEREDOC,
 	PIPE,
-}	token_type;
+}	type;
 
+typedef struct s_token	t_token;
 
 typedef struct s_node
 {
 	// all types
-	node_type	type;
+	type	type;
 	// exec type
 	char		**command;
 	// redir types
 	char		*infile;
 	char		*outfile;
 	char		*limiter;
-	node_type	*exec;
+	type		*exec;
 	// pipe type
-	node_type	*left;
-	node_type	*right;
+	type		*left;
+	type		*right;
 }	t_node;
 
 typedef struct s_token
 {
-	token_type	type;
+	type		type;
 	char		*token;
+	t_token		*next;
+	t_token		*previous;
 }	t_token;
 
 typedef struct s_data
@@ -70,7 +75,7 @@ typedef struct s_data
 	char 		**env;
 	t_token		*tokens;
 	t_node		*parse_tree;
-	int			nb_tokens;
+	// int			nb_tokens;
 	// int			nb_pipes;
 	// int			nb_commands;
 	// t_command	*command_table;
@@ -83,11 +88,12 @@ typedef struct s_data
 
 
 
-// // error.c
-// void	ft_error(char *message, int code);
+// error.c
+void	ft_error(char *message, int code);
 
-// // init.c
-// t_data	*init_data(int argc, char **argv, char **env);
+// init.c
+t_data	*init_data(int argc, char **argv, char **env);
 
+void	lexer(char *input, t_data *data);
 
 #endif
