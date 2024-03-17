@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 14:24:02 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/15 18:25:20 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/17 17:10:54 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,17 +62,14 @@
 // 	return (1);
 // }
 
-type	tok_type(char *token)
+type	tok_type(char *token_str)
 {
-	if (ft_strcmp(token, "<") == 0)
-		return (REDINPT);
-	else if (ft_strcmp(token, ">") == 0)
-		return (REDOUT);
-	else if (ft_strcmp(token, ">>") == 0)
-		return (REDAPPND);
-	else if (ft_strcmp(token, "<<") == 0)
-		return (HEREDOC);
-	else if (ft_strcmp(token, "|") == 0)
+	if (ft_strcmp(token_str, "<") == 0
+		|| ft_strcmp(token_str, ">") == 0
+		|| ft_strcmp(token_str, ">>") == 0
+		|| ft_strcmp(token_str, "<<") == 0)
+		return (REDIR);
+	else if (ft_strcmp(token_str, "|") == 0)
 		return (PIPE);
 	else
 		return (WORD);
@@ -179,8 +176,8 @@ t_token	*ft_toknew(char *token_str, type token_type)
 	token_node = malloc(sizeof(t_token));
 	if (token_node == NULL)
 		ft_error("Memory allocation for token list failed", errno);
-	token_node->token = token_str;
-	token_node->type = token_type;
+	token_node->token_str = token_str;
+	token_node->token_type = token_type;
 	token_node->next = NULL;
 	token_node->previous = NULL;
 	return (token_node);
@@ -214,12 +211,12 @@ void	ft_tokadd_back(t_token **token_list, t_token *new)
 
 void	lexer(char *input, t_data *data)
 {
-	char	*token;
+	char	*token_str;
 
-	token = ft_strtok_mod(input, " ");
-	while (token != NULL)
+	token_str = ft_strtok_mod(input, " ");
+	while (token_str != NULL)
 	{
-		ft_tokadd_back(&data->tokens, ft_toknew(token, tok_type(token)));
-		token = ft_strtok_mod(NULL, " ");
+		ft_tokadd_back(&data->token_list, ft_toknew(token_str, tok_type(token_str)));
+		token_str = ft_strtok_mod(NULL, " ");
 	}
 }

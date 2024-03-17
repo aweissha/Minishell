@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/15 12:35:57 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/17 15:39:06 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,34 +47,34 @@ typedef struct s_token	t_token;
 typedef struct s_node
 {
 	// all types
-	type	type;
+	type	node_type;
 	// exec type
-	char		**command;
+	char	**command;
 	// redir types
-	char		*infile;
-	char		*outfile;
-	char		*limiter;
-	type		*exec;
+	char	*infile;
+	char	*outfile;
+	char	*limiter;
+	type	*next;
 	// pipe type
-	type		*left;
-	type		*right;
+	type	*left;
+	type	*right;
 }	t_node;
 
 typedef struct s_token
 {
-	type		type;
-	char		*token;
+	type		token_type;
+	char		*token_str;
 	t_token		*next;
 	t_token		*previous;
 }	t_token;
 
 typedef struct s_data
 {
-	int			argc;
-	char 		**argv;
-	char 		**env;
-	t_token		*tokens;
-	t_node		*parse_tree;
+	int		argc;
+	char	**argv;
+	char 	**env;
+	t_token	*token_list;
+	t_node	*parse_tree;
 	// int			nb_tokens;
 	// int			nb_pipes;
 	// int			nb_commands;
