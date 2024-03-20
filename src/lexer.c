@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 14:24:02 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/17 17:10:54 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/20 11:26:32 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,57 +75,6 @@ type	tok_type(char *token_str)
 		return (WORD);
 }
 
-int	quotes_left(char *start, char *position, char c)
-{
-	int	quote_count;
-
-	quote_count = 0;
-	position--;
-	while (position >= start)
-	{
-		if (*position == c)
-			quote_count++;
-		position--;
-	}
-	return (quote_count);
-}
-
-int	quotes_right(char *start, char *position, char c)
-{
-	int	quote_count;
-
-	quote_count = 0;
-	position++;
-	while (*position !='\0')
-	{
-		if (*position == c)
-			quote_count++;
-		position++;
-	}
-	return (quote_count);
-}
-
-int	in_quotes(char *start, char *position)
-{
-	if ((quotes_left(start, position, 34) % 2) == 1 
-		&& quotes_right(start, position, 34) > 0 
-		&& *position != 34)
-		return (1);
-	else if ((quotes_left(start, position, 39) % 2) == 1 
-		&& quotes_right(start, position, 39) > 0 
-		&& *position != 39)
-		return (1);	
-	else if (*position == 34 && (quotes_left(start, position, 34) % 2) == 1)
-		return (1);
-	else if (*position == 39 && (quotes_left(start, position, 39) % 2) == 1)
-		return (1);
-	else if (*position == 34 && (quotes_right(start, position, 34) > 0))
-		return (1);
-	else if (*position == 39 && (quotes_right(start, position, 39) > 0))
-		return (1);
-	return (0);
-}
-
 char	*ft_strtok_mod(char *str, const char *sep)
 {
 	static char	*position;
@@ -150,63 +99,7 @@ char	*ft_strtok_mod(char *str, const char *sep)
 		*(position)++ = '\0';
 	else
 		position = NULL;
-	return (ft_strtrim(token_start, "\"\'"));
-}
-
-// int	count_tokens(char *s, char c)
-// {
-// 	unsigned int	counter;
-// 	unsigned int	i;
-
-// 	i = 0;
-// 	counter = 0;
-// 	while (s[i] != '\0')
-// 	{
-// 		i++;
-// 		if (((s[i] == c || s[i] == '\0') && s[i - 1] != c))
-// 			counter++;
-// 	}
-// 	return (counter);
-// }
-
-t_token	*ft_toknew(char *token_str, type token_type)
-{
-	t_token	*token_node;
-
-	token_node = malloc(sizeof(t_token));
-	if (token_node == NULL)
-		ft_error("Memory allocation for token list failed", errno);
-	token_node->token_str = token_str;
-	token_node->token_type = token_type;
-	token_node->next = NULL;
-	token_node->previous = NULL;
-	return (token_node);
-}
-
-t_token	*ft_toklast(t_token *token_list)
-{
-	if (token_list == NULL)
-		return (NULL);
-	while (token_list->next != NULL)
-		token_list = token_list->next;
-	return (token_list);
-}
-
-void	ft_tokadd_back(t_token **token_list, t_token *new)
-{
-	t_token	*last;
-
-	if (token_list && new)
-	{
-		if (*token_list)
-		{
-			last = ft_toklast(*token_list);
-			last->next = new;
-			last->next->previous = last;
-		}
-		else
-			*token_list = new;
-	}
+	return (token_start);
 }
 
 void	lexer(char *input, t_data *data)

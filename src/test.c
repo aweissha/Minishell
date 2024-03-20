@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/15 14:16:28 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/19 14:35:33 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ int	main(int argc, char **argv, char **env)
 	data = init_data(argc, argv, env);
 	lexer(input, data);
 
-	tmp = data->tokens;
+	tmp = data->token_list;
 	while (tmp != NULL)
 	{
-		printf("type: %u\ntoken_str: %s\n", tmp->type, tmp->token);
+		printf("type: %u\ntoken_str: %s\n", tmp->token_type, tmp->token_str);
 		tmp = tmp->next;
 	}
 }
