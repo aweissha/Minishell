@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:34:01 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/22 11:12:22 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/22 16:06:32 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,13 @@ int	in_quotes(char *start, char *position)
 		&& quotes_right(start, position, 39) > 0 
 		&& *position != 39)
 		return (1);	
-	else if (*position == 34 && (quotes_left(start, position, 34) % 2) == 1)
-		return (1);
-	else if (*position == 39 && (quotes_left(start, position, 39) % 2) == 1)
-		return (1);
-	else if (*position == 34 && (quotes_right(start, position, 34) > 0))
-		return (1);
-	else if (*position == 39 && (quotes_right(start, position, 39) > 0))
-		return (1);
+	// else if (*position == 34 && (quotes_left(start, position, 34) % 2) == 1)
+	// 	return (1);
+	// else if (*position == 39 && (quotes_left(start, position, 39) % 2) == 1)
+	// 	return (1);
+	// else if (*position == 34 && (quotes_right(start, position, 34) > 0))
+	// 	return (1);
+	// else if (*position == 39 && (quotes_right(start, position, 39) > 0))
+	// 	return (1);
 	return (0);
 }
