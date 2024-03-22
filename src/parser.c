@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:36:48 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/19 16:07:57 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/22 13:34:03 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ t_node	*parse_exec(t_token *token_list)
 		i++;
 	}
 	exec_node->command[i] = NULL;
-	toklist_clear(token_list);
+	toklist_clear(&token_list);
 	return (exec_node);
 }
 
@@ -69,13 +69,11 @@ for left it calls the parse_redir() function, because left will have no more Pip
 for right it calls the parse_pipe function again.
 If there is no pipe present, parse_redir is called.
 **/
-t_node	*parse_pipe(t_data *data)
+t_node	*parse_pipe(t_token *token_list)
 {
-	t_token	*token_list;
 	t_token	*pipe_token;
 	t_node	*pipe_node;
 
-	token_list = data->token_list;
 	pipe_token = find_token(token_list, PIPE);
 	if (pipe_token != NULL)
 	{

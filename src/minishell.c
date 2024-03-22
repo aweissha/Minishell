@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:42:48 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/20 12:58:25 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/22 13:34:19 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	parse_input(char *input, t_data *data)
 	// check_syntax(input);
 	lexer(input, data);
 	// expander(data);
-	data->parse_tree = parse_pipe(data);
+	data->parse_tree = parse_pipe(data->token_list);
 }
 
 /** function should execute all commands, by starting at the top of the parse tree 
@@ -66,7 +66,6 @@ int	main(int argc, char **argv, char **env)
 			free(input);
 		else
 		{
-			// printf("you entered: %s\n", input);
 			if (ft_fork() == 0)
 			{
 				parse_input(input, data);
@@ -84,6 +83,7 @@ int	main(int argc, char **argv, char **env)
 // Plan:
 /*
 
+- replace strndup with ft_strndup in lexer
 - syntax checker: check right amount of quotes, every opened quote is closed.
 - implement quotes '' and ""
 - cd -

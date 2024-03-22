@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/19 15:06:43 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/22 13:35:23 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,11 @@ typedef enum
 	REDAPPND,
 	HEREDOC,
 	PIPE,
+	TOKEN_SPACE,
 }	type;
 
 typedef struct s_token	t_token;
+typedef struct s_node	t_node;
 
 typedef struct s_node
 {
@@ -45,10 +47,10 @@ typedef struct s_node
 	char	*infile;
 	char	*outfile;
 	char	*limiter;
-	type	*next;
+	t_node	*next;
 	// pipe type
-	type	*left;
-	type	*right;
+	t_node	*left;
+	t_node	*right;
 }	t_node;
 
 typedef struct s_token
@@ -85,7 +87,7 @@ t_data	*init_data(int argc, char **argv, char **env);
 
 // lexer.c
 type	tok_type(char *token_str);
-char	*ft_strtok_mod(char *str, const char *sep);
+// char	*ft_strtok_mod(char *str, const char *sep);
 void	lexer(char *input, t_data *data);
 
 // parse_utils.c
@@ -96,7 +98,7 @@ t_token	*find_token(t_token	*token_list, type token_type);
 // parser.c
 t_node	*parse_exec(t_token *token_list);
 t_node	*parse_redir(t_token *token_list);
-t_node	*parse_pipe(t_data *data);
+t_node	*parse_pipe(t_token *token_list);
 
 // token_list_utils.c
 int		toklist_size(t_token *token_list);
