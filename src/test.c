@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/22 13:48:31 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/26 18:14:54 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,15 +53,33 @@ void	test_parse_tree(t_node *node)
 	}
 }
 
+void	test_env_list(t_data *data)
+{
+	t_env	*env_list;
+	
+	env_list = data->env_list;
+	while (env_list != NULL)
+	{
+		printf("%s=%s\n", env_list->var_name, env_list->var_str);
+		env_list = env_list->next;
+	}
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	t_data	*data;
 	t_token	*tmp;
 	char	*input;
 
-	input = readline("Minishell $> ");
 	data = init_data(argc, argv, env);
+	create_env_list(data);
+	test_env_list(data);
+	return (0);
+	
+	input = readline("Minishell $> ");
 	lexer(input, data);
+	
+	
 
 	tmp = data->token_list;
 	while (tmp != NULL)

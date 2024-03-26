@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:42:48 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/22 13:34:19 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/26 10:22:15 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,8 @@ int	main(int argc, char **argv, char **env)
 // Plan:
 /*
 
+- implement the configuration of the env_list at the beginning of the parent process. Also add the vriable ? for the last exit code.
+- replace isspace funtion in lexer
 - replace strndup with ft_strndup in lexer
 - syntax checker: check right amount of quotes, every opened quote is closed.
 - implement quotes '' and ""

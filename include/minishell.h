@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/22 13:35:23 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/26 18:09:35 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef enum
 
 typedef struct s_token	t_token;
 typedef struct s_node	t_node;
+typedef struct s_env	t_env;
 
 typedef struct s_node
 {
@@ -61,6 +62,13 @@ typedef struct s_token
 	t_token		*previous;
 }	t_token;
 
+typedef struct s_env
+{
+	char	*var_name;
+	char	*var_str;
+	t_env	*next;
+}	t_env;
+
 typedef struct s_data
 {
 	int		argc;
@@ -68,7 +76,18 @@ typedef struct s_data
 	char 	**env;
 	t_token	*token_list;
 	t_node	*parse_tree;
+	t_env	*env_list;
 }	t_data;
+
+// env_list_utils.c
+t_env	*env_list_last(t_env *env_list);
+t_env	*env_list_new(char *var_name, char *var_str);
+void	env_list_add_back(t_env **env_list, t_env *new);
+
+// env.c
+char	*get_var_str(char *env_line);
+char	*get_var_name(char *env_line);
+void	create_env_list(t_data *data);
 
 // error.c
 void	ft_error(char *message, int code);
