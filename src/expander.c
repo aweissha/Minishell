@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 11:45:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/27 18:15:36 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/27 19:04:15 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,9 +256,10 @@ void	create_expanded_str(char *expanded_str, char *original_str, t_data *data)
 	s_quote_open = 0;
 	while (*original_str != '\0')
 	{
-		
+		copy_over(expanded_str, original_str);
+		original_str += add_str(original_str, &d_quote_open, &s_quote_open);
+		expanded_str += add_strlen(original_str, &d_quote_open, &s_quote_open, data);
 	}
-	
 }
 
 char	*expand_str(t_token *token, t_data *data)
