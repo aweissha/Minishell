@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/26 18:14:54 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/27 12:06:46 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,9 @@ int	main(int argc, char **argv, char **env)
 	char	*input;
 
 	data = init_data(argc, argv, env);
-	create_env_list(data);
-	test_env_list(data);
-	return (0);
+	// create_env_list(data);
+	// test_env_list(data);
+	// return (0);
 	
 	input = readline("Minishell $> ");
 	lexer(input, data);
