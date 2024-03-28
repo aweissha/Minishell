@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/27 17:50:20 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/28 16:15:39 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <readline/history.h>
 #include <stdlib.h>
 #include "../libft/libft.h"
+#include <string.h>
 
 typedef enum
 {
@@ -91,6 +92,17 @@ void	create_env_list(t_data *data);
 
 // error.c
 void	ft_error(char *message, int code);
+
+// expander.c
+t_env	*find_var(char *str, int var_length, t_data *data);
+int		var_length(char *str);
+int		edit_quote_counters(char *str, int *s_quote_open, int *d_quote_open);
+int		add_strlen(char *str, int *d_quote_open, int *s_quote_open, t_data *data);
+int		add_str(char *str, int *s_quote_open);
+int		strlen_expanded(char *str, t_data *data);
+void	create_expanded_str(char *expanded_str, char *original_str, t_data *data);
+char	*expand_str(t_token *token, t_data *data);
+void	expander(t_data *data);
 
 // free.c
 void	free_token(t_token	*token);

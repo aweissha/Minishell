@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 11:45:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/27 19:04:15 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/03/28 17:22:16 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,28 +89,18 @@ t_env	*find_var(char *str, int var_length, t_data *data)
 {
 	t_env	*env_list;
 
+	if (var_length == 0)
+		return (NULL);
 	env_list = data->env_list;
 	while (env_list != NULL)
 	{
+	printf("hello from find_var\n");
 		if (ft_strncmp(str, env_list->var_name, var_length) == 0)
 			return (env_list);
 		env_list = env_list->next;
 	}
 	return (NULL);
 }
-
-// int	var_length(char *str)
-// {
-// 	int	i;
-
-// 	i = 1;
-// 	if (str[i] == '?')
-// 		return (2);
-// 	while (!(str[i] <= 13 && str[i] >= 9) 
-// 		&& str[i] != '$' && str[i] != '\0')
-// 		i++;
-// 	return (i);
-// }
 
 // /*
 // Expander: 
@@ -166,7 +156,7 @@ int	var_length(char *str)
 	int	i;
 
 	i = 0;
-	while (!(str[i] <= 13 && str[i] >= 9)
+	while (!( str[i] == ' ' || (str[i] <= 13 && str[i] >= 9))
 		&& str[i] != '$' && str[i] != '\0'
 		&& str[i] != '\"' && str[i] != '\'')
 		i++;
@@ -200,29 +190,30 @@ int	edit_quote_counters(char *str, int *s_quote_open, int *d_quote_open)
 
 int	add_strlen(char *str, int *d_quote_open, int *s_quote_open, t_data *data)
 {
-	char	*var;
+	t_env	*var;
 
-	if (*str == '$')
+	if (*str == '$' && *s_quote_open != 1)
 	{
-		if (s_quote_open != 1 && *str != '\0')
-		{
-			var = find_var(str, var_length(str), data)->var_str;
-			if (var != NULL)
-				return (ft_strlen(var));
-			else
-				return (0);
-		}
+		str++;
+		var = find_var(str, var_length(str), data);
+		if (var != NULL)
+			return (ft_strlen(var->var_str));
+		else if ((*str == ' ' || (*str <= 13 && *str >= 9))
+			|| *str == '\0')
+			return (1);
+		else
+			return (0);
 	}
 	else
-		return(edit_quote_counters(str, &s_quote_open, &d_quote_open));
+		return(edit_quote_counters(str, s_quote_open, d_quote_open));
 }
 
-int	add_str(char *str, int *d_quote_open, int *s_quote_open)
+int	add_str(char *str, int *s_quote_open)
 {
-	if (*str == '$')
+	if (*str == '$' && *s_quote_open != 1)
 	{
-		if (s_quote_open != 1 && *str != '\0')
-			return(var_length(str));
+		str++;
+		return(var_length(str) + 1);
 	}
 	else
 		return (1);
@@ -239,26 +230,55 @@ int	strlen_expanded(char *str, t_data *data)
 	i = 0;
 	while (*str != '\0')
 	{
-		str+= add_str(str, &d_quote_open, &s_quote_open);
+		printf("hello\n");
+		printf("%d\n", i);
+		printf("%p\n", str);
 		i+= add_strlen(str, &d_quote_open, &s_quote_open, data);
+		str+= add_str(str, &s_quote_open);
 	}
 	return (i);
+}
+
+
+void	copy_over(char **p_expanded_str, char *original_str, t_data *data)
+{
+	t_env	*var;
+	char	*expanded_str;
+
+	expanded_str = *p_expanded_str;
+	var = find_var(original_str + 1, var_length(original_str + 1), data);
+	if (var != NULL)
+	{
+		strncpy(expanded_str, var->var_str, ft_strlen(var->var_str));
+		expanded_str+= ft_strlen(var->var_str);
+	}
+	else if ((*(original_str + 1) == ' ' || (*(original_str + 1) <= 13 && *(original_str + 1) >= 9))
+		|| *(original_str + 1) == '\0')
+		{
+			*expanded_str = '$';
+			expanded_str++;
+		}
+	else
+		return ;
 }
 
 void	create_expanded_str(char *expanded_str, char *original_str, t_data *data)
 {
 	int		d_quote_open;
 	int		s_quote_open;
-	char	*start_expanded_str;
 
-	start_expanded_str = expanded_str;
 	d_quote_open = 0;
 	s_quote_open = 0;
 	while (*original_str != '\0')
 	{
-		copy_over(expanded_str, original_str);
-		original_str += add_str(original_str, &d_quote_open, &s_quote_open);
-		expanded_str += add_strlen(original_str, &d_quote_open, &s_quote_open, data);
+		if (*original_str == '$' && s_quote_open != 1)
+			copy_over(&expanded_str, original_str, data);
+		else if (edit_quote_counters(original_str, s_quote_open, d_quote_open) == 1)
+		{
+			*expanded_str = *original_str;
+			expanded_str++;
+		}
+		original_str += add_str(original_str, &s_quote_open);
 	}
 }
 
@@ -283,6 +303,7 @@ void	expander(t_data *data)
 	{
 		tmp = expand_str(token_list, data);
 		free(token_list->token_str);
-		token_list = tmp;
+		token_list->token_str = tmp;
+		token_list = token_list->next;
 	}
 }
