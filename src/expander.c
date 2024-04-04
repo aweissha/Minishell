@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 11:45:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/28 17:22:16 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/04 12:41:15 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,9 +230,9 @@ int	strlen_expanded(char *str, t_data *data)
 	i = 0;
 	while (*str != '\0')
 	{
-		printf("hello\n");
-		printf("%d\n", i);
-		printf("%p\n", str);
+		// printf("hello\n");
+		// printf("%d\n", i);
+		// printf("%p\n", str);
 		i+= add_strlen(str, &d_quote_open, &s_quote_open, data);
 		str+= add_str(str, &s_quote_open);
 	}
@@ -243,20 +243,19 @@ int	strlen_expanded(char *str, t_data *data)
 void	copy_over(char **p_expanded_str, char *original_str, t_data *data)
 {
 	t_env	*var;
-	char	*expanded_str;
 
-	expanded_str = *p_expanded_str;
 	var = find_var(original_str + 1, var_length(original_str + 1), data);
 	if (var != NULL)
 	{
-		strncpy(expanded_str, var->var_str, ft_strlen(var->var_str));
-		expanded_str+= ft_strlen(var->var_str);
+		// replace strncpy with libft function
+		strncpy(*p_expanded_str, var->var_str, ft_strlen(var->var_str));
+		*p_expanded_str+= ft_strlen(var->var_str);
 	}
 	else if ((*(original_str + 1) == ' ' || (*(original_str + 1) <= 13 && *(original_str + 1) >= 9))
 		|| *(original_str + 1) == '\0')
 		{
-			*expanded_str = '$';
-			expanded_str++;
+			**p_expanded_str = '$';
+			(*p_expanded_str)++;
 		}
 	else
 		return ;
@@ -273,13 +272,14 @@ void	create_expanded_str(char *expanded_str, char *original_str, t_data *data)
 	{
 		if (*original_str == '$' && s_quote_open != 1)
 			copy_over(&expanded_str, original_str, data);
-		else if (edit_quote_counters(original_str, s_quote_open, d_quote_open) == 1)
+		else if (edit_quote_counters(original_str, &s_quote_open, &d_quote_open) == 1)
 		{
 			*expanded_str = *original_str;
 			expanded_str++;
 		}
 		original_str += add_str(original_str, &s_quote_open);
 	}
+	*expanded_str = '\0';
 }
 
 char	*expand_str(t_token *token, t_data *data)
@@ -301,9 +301,12 @@ void	expander(t_data *data)
 	token_list = data->token_list;
 	while (token_list != NULL)
 	{
-		tmp = expand_str(token_list, data);
-		free(token_list->token_str);
-		token_list->token_str = tmp;
+		if (token_list->token_type == WORD)
+		{
+			tmp = expand_str(token_list, data);
+			free(token_list->token_str);
+			token_list->token_str = tmp;
+		}
 		token_list = token_list->next;
 	}
 }

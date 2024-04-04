@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/28 15:05:51 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/04 12:05:47 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,28 +70,42 @@ int	main(int argc, char **argv, char **env)
 	t_data	*data;
 	t_token	*tmp;
 	char	*input;
+	t_token	*test_token;
 
 	data = init_data(argc, argv, env);
 	create_env_list(data);
 	// test_env_list(data);
-	// return (0);
 	
-	// test expander
-	printf("strlen_expanded: %d\n", strlen_expanded("bla $ bla$", data));
-	return (0);
-
 	input = readline("Minishell $> ");
 	lexer(input, data);
-	
-	
-	
+	// return (0);
 
+	// print token list before expansion
 	tmp = data->token_list;
 	while (tmp != NULL)
 	{
 		printf("type: %u\ntoken_str: %s\n", tmp->token_type, tmp->token_str);
 		tmp = tmp->next;
 	}
+
+	expander(data);
+
+	// // test expander
+	// test_token = malloc(sizeof(t_token));
+	// test_token->token_str = "ls\"-la\"";
+	// printf("str_expanded: %s\n", expand_str(test_token, data));
+	// return (0);
+
+	// print token list after expansion
+	tmp = data->token_list;
+	while (tmp != NULL)
+	{
+		printf("type: %u\ntoken_str: %s\n", tmp->token_type, tmp->token_str);
+		tmp = tmp->next;
+	}
+	
+	
+
 	data->parse_tree = parse_pipe(data->token_list);
 	test_parse_tree(data->parse_tree);
 }
