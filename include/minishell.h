@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/28 16:15:39 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/04 13:53:18 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ typedef struct s_data
 	t_token	*token_list;
 	t_node	*parse_tree;
 	t_env	*env_list;
+	int		last_exit_code;
 }	t_data;
 
 // env_list_utils.c
