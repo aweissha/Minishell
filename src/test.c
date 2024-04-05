@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/04 12:05:47 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/05 15:49:47 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	test_env_list(t_data *data)
 		env_list = env_list->next;
 	}
 }
-
+/*
 int	main(int argc, char **argv, char **env)
 {
 	t_data	*data;
@@ -108,4 +108,39 @@ int	main(int argc, char **argv, char **env)
 
 	data->parse_tree = parse_pipe(data->token_list);
 	test_parse_tree(data->parse_tree);
+}
+*/
+int	main(int argc, char **argv, char **env)
+{
+	t_data	*data;
+	// t_token	*tmp;
+	char	*input;
+
+	data = init_data(argc, argv, env);
+	create_env_list(data);
+	// test_env_list(data);
+	// return (0);
+
+	while (1)
+	{
+		input = readline("Minishell $> ");
+		// check for open quotes -> if open quotes abort
+		add_history(input);
+		// data = init_data(argc, argv, env);
+		printf("check\n");
+		lexer(input, data);
+
+		// tmp = data->token_list;
+		// while (tmp != NULL)
+		// {
+			// printf("type: %u\ntoken_str: %s\n", tmp->token_type, tmp->token_str);
+		// 	tmp = tmp->next;
+		// }
+		expander(data);
+		data->parse_tree = parse_pipe(data->token_list);
+		data->token_list = NULL;
+		test_parse_tree(data->parse_tree);
+		data->last_exit_code = pre_exec(data->parse_tree);
+	}
+	return (0);
 }

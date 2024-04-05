@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/04 13:53:18 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/05 15:49:23 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,10 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdlib.h>
+#include <fcntl.h>
 #include "../libft/libft.h"
 #include <string.h>
+#include "../libft/get_next_line.h"
 
 typedef enum
 {
@@ -81,6 +83,16 @@ typedef struct s_data
 	int		last_exit_code;
 }	t_data;
 
+typedef struct s_path_prep
+{
+	char	**directory;
+	char	*cmd_prep;
+	char	*pathcheck;
+	char	*first_cmd;
+	char	*paths;
+}			t_path_prep;
+
+
 // env_list_utils.c
 t_env	*env_list_last(t_env *env_list);
 t_env	*env_list_new(char *var_name, char *var_str);
@@ -95,15 +107,23 @@ void	create_env_list(t_data *data);
 void	ft_error(char *message, int code);
 
 // expander.c
-t_env	*find_var(char *str, int var_length, t_data *data);
-int		var_length(char *str);
-int		edit_quote_counters(char *str, int *s_quote_open, int *d_quote_open);
-int		add_strlen(char *str, int *d_quote_open, int *s_quote_open, t_data *data);
-int		add_str(char *str, int *s_quote_open);
 int		strlen_expanded(char *str, t_data *data);
 void	create_expanded_str(char *expanded_str, char *original_str, t_data *data);
 char	*expand_str(t_token *token, t_data *data);
 void	expander(t_data *data);
+
+// expander_utils.c
+int		add_strlen(char *str, int *d_quote_open, int *s_quote_open, t_data *data);
+int		add_str(char *str, int *s_quote_open);
+void	add_exit_code(char *expanded_str, char *exit_code);
+void	copy_over(char **p_expanded_str, char *original_str, t_data *data);
+
+// expander_utils2.c
+t_env	*find_var(char *str, int var_length, t_data *data);
+int		var_length(char *str);
+int		edit_quote_counters(char *str, int *s_quote_open, int *d_quote_open);
+int		count_digits(int n);
+
 
 // free.c
 void	free_token(t_token	*token);
@@ -141,5 +161,9 @@ void	ft_tokadd_back(t_token **token_list, t_token *new);
 
 // utils.c
 int		ft_fork(void);
+
+//exec.c
+int		pre_exec(t_node *node);
+void	exec(t_node *node);
 
 #endif

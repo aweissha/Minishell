@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_list_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sparth <sparth@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:26:08 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/19 11:26:44 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/04 15:46:25 by sparth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,17 @@ int	toklist_size(t_token *token_list)
 
 void	toklist_clear(t_token **token_list)
 {
+	// token_list = NULL;
 	t_token	*tmp;
 
 	tmp = *token_list;
 	while (tmp != NULL)
 	{
 		tmp = (*token_list)->next;
-		free((*token_list)->token_str);
-		free((*token_list));
+		if ((*token_list)->token_str)
+			free((*token_list)->token_str);
+		if (*token_list)
+			free((*token_list));
 		*token_list = tmp;
 	}
 }

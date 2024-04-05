@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 13:33:18 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/26 14:31:03 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/04 16:46:50 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,6 @@ t_data	*init_data(int argc, char **argv, char **env)
 	data->token_list = NULL;
 	data->parse_tree = NULL;
 	data->env_list = NULL;
-	// data->nb_tokens = 0;
+	data->last_exit_code = 0;
 	return (data);
 }

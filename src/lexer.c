@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 14:24:02 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/22 11:15:03 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/05 15:48:04 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ type	tok_type(char *token_str)
 // 	}
 // }
 
-int classify_char(char c)
+type classify_char(char c)
 {
 	if (c == '|')
 		return (PIPE);
@@ -134,7 +134,7 @@ void	add_token(t_token **token_list, char *str, char *str_start)
 
 	i = 0;
 	token_type = classify_char(*str);
-	while (classify_char(str[i]) == token_type && str[i] != '\0'
+	while ((classify_char(str[i]) == token_type && str[i] != '\0')
 		|| (in_quotes(str_start, &str[i]) == 1 && str[i] != '\0'))
 		i++;
 	// printf("number counted\n");
@@ -148,7 +148,7 @@ void	lexer(char *input, t_data *data)
 	char	*input_start;
 
 	input_start = input;
-	while (*input != '\0')
+	while (input && *input != '\0')
 	{
 		while (classify_char(*input) == TOKEN_SPACE && *input != '\0')
 			input++;

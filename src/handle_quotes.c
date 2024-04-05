@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_quotes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sparth <sparth@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:34:01 by aweissha          #+#    #+#             */
-/*   Updated: 2024/03/22 16:06:32 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/04 14:47:49 by sparth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ int	quotes_right(char *start, char *position, char c)
 {
 	int	quote_count;
 
+	start = NULL;
 	quote_count = 0;
 	position++;
 	while (*position !='\0')
