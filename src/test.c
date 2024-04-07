@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/07 16:29:45 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/07 16:45:02 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,9 +135,9 @@ int	main(int argc, char **argv, char **env)
 		input = readline("Minishell $> ");
 		// check for open quotes -> if open quotes abort
 		add_history(input);
-		// data = init_data(argc, argv, env);
 		printf("check\n");
 		lexer(input, data);
+		free(input);
 
 		// tmp = data->token_list;
 		// while (tmp != NULL)
