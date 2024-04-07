@@ -24,6 +24,7 @@ SRCS = 		$(SRC_DIR)test.c \
 			$(SRC_DIR)expander_utils2.c \
 			$(SRC_DIR)env_list_utils.c \
 			$(SRC_DIR)env.c \
+			$(SRC_DIR)buildins.c \
 			libft/get_next_line.c \
 			libft/get_next_line_utils.c \
 			# $(SRC_DIR)error.c \

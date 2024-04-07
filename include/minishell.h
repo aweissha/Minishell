@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/05 15:49:23 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/07 16:38:37 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,11 @@ typedef struct s_path_prep
 }			t_path_prep;
 
 
+// buildins.c
+void	env_buildin(t_data *data);
+void	export(char *variable, t_data *data);
+void	unset(char *variable, t_data *data);
+
 // env_list_utils.c
 t_env	*env_list_last(t_env *env_list);
 t_env	*env_list_new(char *var_name, char *var_str);
@@ -124,9 +129,14 @@ int		var_length(char *str);
 int		edit_quote_counters(char *str, int *s_quote_open, int *d_quote_open);
 int		count_digits(int n);
 
-
 // free.c
 void	free_token(t_token	*token);
+void	free_env(t_env *env_node);
+void	free_str_array(char **array);
+void	free_node(t_node *node);
+void	free_parse_tree(t_node *node);
+void	free_env_list(t_env *env_list);
+void	free_everything(t_data *data);
 
 // handle_quotes.c
 int		quotes_left(char *start, char *position, char c);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sparth <sparth@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:22:25 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/04 14:49:37 by sparth           ###   ########.fr       */
+/*   Updated: 2024/04/07 11:37:18 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	update_token_list(t_token **token_list, t_token *redir_token)
 	t_token	*tmp;
 	t_token	*tmp2;
 
-	redir_token = NULL;
+	redir_token = NULL; // change
 	if ((*token_list)->token_type == REDIR)
 	{
 		tmp = *token_list;
