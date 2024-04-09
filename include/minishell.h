@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/09 11:51:36 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/09 15:00:14 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 #include "../libft/libft.h"
 #include <string.h>
 #include "../libft/get_next_line.h"
+#include <limits.h>
+
 
 typedef enum
 {
@@ -174,7 +176,7 @@ int		ft_fork(void);
 t_env	*find_var(char *var_name, t_data *data);
 
 //exec.c
-int		pre_exec(t_node *node);
-void	exec(t_node *node);
+int		pre_exec(t_node *node, t_data *data);
+void	exec(t_node *node, t_data *data);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:52:02 by sparth            #+#    #+#             */
-/*   Updated: 2024/04/05 15:49:16 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/09 15:27:30 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void	heredoc(t_node *node)
 		exit (2);
 	while (1)
 	{
-		write(1, "here_doc ", 9);
+		write(1, "here_doc> ", 10);
 		line = get_next_line(STDIN_FILENO);
 		if (ft_strncmp(node->limiter, line, ft_strlen(node->limiter)) == 0
 			&& ft_strlen(node->limiter) + 1 == ft_strlen(line))
@@ -194,7 +194,7 @@ void	output_redirect_append(t_node *node)
 		exit (1);
 }
 
-void piping(t_node *node)
+void piping(t_node *node, t_data *data)
 {
 		int		fd[2];
 		int		wpidstatus;
@@ -212,7 +212,7 @@ void piping(t_node *node)
 				exit (1);
 			if (close(fd[0]) == -1 || close(fd[1]) == -1)
 				exit(1);
-			exec(node->left);
+			exec(node->left, data);
 		}
 		pid_right = fork();
 		if (pid_right == -1)
@@ -223,10 +223,8 @@ void piping(t_node *node)
 				exit (1);
 			if (close(fd[0]) == -1 || close(fd[1]) == -1)
 				exit(1);
-			exec(node->right);
+			exec(node->right, data);
 		}
-		// close(fd[0]);
-		// close(fd[1]);
 		if (pid_right != 0 && pid_left != 0)
 		{
 			if (close(fd[0]) == -1 || close(fd[1]) == -1)
@@ -234,12 +232,8 @@ void piping(t_node *node)
 		}
 		waitpid(pid_right, &wpidstatus, 0);
 		waitpid(pid_left, NULL, 0);
-		// fprintf(stderr, "checkkkk\n");
 		if (WIFEXITED(wpidstatus))
 		{
-			// usleep only 4 printf
-			// printf("exit status: %d\n", WEXITSTATUS(wpidstatus));
-			// usleep (20);
 			exit (WEXITSTATUS(wpidstatus));
 		}
 }
@@ -254,11 +248,40 @@ void	path_error_message(char *error)
 		fprintf(stderr, "%s%s: %s\n", "minishell: ", cmd_cut(error), "command not found");
 }
 
-void	execution(t_node *node)
+void	check_if_buildin(t_node *node, t_data *data)
+{
+	if (ft_strncmp (node->command[0], "env", 4) == 0)
+	{
+		while (data->env_list)
+		{
+			printf("%s=%s\n", data->env_list->var_name, data->env_list->var_str);
+			data->env_list = data->env_list->next;
+		}
+		exit (0);
+	}
+	// if (ft_strncmp(node->command[0], "echo", 4) == 0)
+	// 	echo(node);
+	if (ft_strncmp (node->command[0], "pwd", 4) == 0)
+	{
+		printf("%s\n", getcwd(NULL, PATH_MAX));
+		exit (0);
+	}
+	if (ft_strncmp (node->command[0], "exit", 5) == 0)
+		exit (0);
+	if (ft_strncmp (node->command[0], "cd", 3) == 0)
+		exit (0);
+	if (ft_strncmp (node->command[0], "unset", 6) == 0)
+		exit (0);
+	if (ft_strncmp (node->command[0], "export", 7) == 0)
+		exit (0);
+}
+
+void	execution(t_node *node, t_data *data)
 {
 	char	*path;
 	// char	**cmd;
 
+	check_if_buildin(node, data);
 	path = path_check(node->command[0], getenv("PATH="));
 	if (!path)
 		path_error_message(node->command[0]);
@@ -270,53 +293,278 @@ void	execution(t_node *node)
 	
 }
 
-void	exec(t_node *node)
+void	string_cut(char *s, int flag)
+{
+	int		slash_count;
+	int		char_count;
+	int		i;
+	char	cut[PATH_MAX];
+
+	slash_count = 0;
+	char_count = 0;
+	i = 0;
+	while (s[char_count])
+	{
+		if (s[char_count] == '/')
+			slash_count++;
+		char_count++;
+	}
+	char_count = 0;
+	if (slash_count <= 1)
+		return ;
+	while (slash_count)
+	{
+		if (slash_count - flag == 0)
+			break;
+		if (s[char_count] == '/')
+			slash_count--;
+		char_count++;
+	}
+	while (i < char_count)
+	{
+		cut[i] = s[i];
+		i++;
+	}
+	cut[i] = '\0';
+	if (chdir(cut) == -1)
+	{
+		printf("chdir failed\n");
+		exit (1);
+	}
+}
+
+// delte unset when export is working correctly 
+void	change_pwds(t_data *data, bool flag)
+{
+	char *temp;
+	
+	if (flag == 0)
+	{
+			temp = ft_strjoin("OLDPWD=", getcwd(NULL, PATH_MAX));
+			if (!temp)
+			{
+				printf("ft_strjoin failed\n");
+				exit (1);
+			}
+			export(temp, data);
+			free(temp);
+	}
+	if (flag == 1)
+	{
+			temp = ft_strjoin("PWD=", getcwd(NULL, PATH_MAX));
+			if (!temp)
+			{
+				printf("ft_strjoin failed\n");
+				exit (1);
+			}
+			export(temp, data);
+			free(temp);
+	}
+}
+void	prep_dir_change(t_data *data, int flag, char *path)
+{
+	if (path)
+	{
+			change_pwds(data, 0);
+			if(chdir(path) == -1)
+			{
+				printf("chdir failed\n");
+				exit (1);
+			}
+			change_pwds(data, 1);
+	}
+	else
+	{
+		change_pwds(data, 0);
+		string_cut(getcwd(NULL, PATH_MAX), flag);
+		change_pwds(data, 1);
+	}
+}
+
+// delte unset when export is working correctly 
+bool	switch_between_dir(t_data *data)
+{
+	char *old_pwd;
+	char *temp;
+	t_env *temp_lst;
+	
+	temp_lst = data->env_list;
+	while (temp_lst)
+	{
+		if (ft_strncmp(temp_lst->var_name, "OLDPWD", 7) == 0)
+		{
+			old_pwd = getcwd(NULL, PATH_MAX);
+			if (chdir(temp_lst->var_str) == -1)
+			{
+				printf("chdir failed\n");
+				exit (1);
+			}
+			temp = ft_strjoin("OLDPWD=", old_pwd);
+			if (!temp)
+			{
+				printf("ft_strjoin failed\n");
+				exit (1);
+			}
+			export(temp, data);
+			free(temp);
+			change_pwds(data, 1);
+			return (1);
+		}
+		temp_lst = temp_lst->next;
+	}
+	printf("minishell: cd: OLDPWD not set");
+	return (-1);
+}
+
+int	path_change(char *cmd, t_data *data)
+{
+	if (access(cmd, F_OK))
+	{
+		printf("minishell: cd: no such file or directory: %s\n", cmd);
+		return (-1);
+	}
+	prep_dir_change(data, 0, cmd);
+	return (1);
+}
+
+int	look_4_cd(t_node *node, t_data *data)
+{
+	if (node->node_type == EXEC && node->command[0] &&
+		ft_strncmp(node->command[0], "cd", ft_strlen(node->command[0]) + 1) == 0
+		&& node->command[1] == NULL)
+	{
+		prep_dir_change(data, 2, NULL);
+		return (1);
+	}
+	if (node->node_type == EXEC && node->command[0] &&
+		ft_strncmp(node->command[0], "cd", ft_strlen(node->command[0]) + 1) == 0
+		&& node->command[1] && node->command[2] == NULL)
+	{
+		if (ft_strncmp(node->command[1], ".", 3) == 0)
+			return (1);
+		else if (ft_strncmp(node->command[1], "..", 3) == 0)
+			prep_dir_change(data, 0, NULL);
+		else if (ft_strncmp(node->command[1], "~", 2) == 0)
+			prep_dir_change(data, 2, NULL);
+		else if (ft_strncmp(node->command[1], "-", 2) == 0)
+			return (switch_between_dir(data));
+		else
+			return (path_change(node->command[1], data));
+		return (1);
+	}
+	return (0);
+}
+
+void	exec(t_node *node, t_data *data)
 {
 	// node->pipe_end = 2;
 	if (node->node_type == PIPE)
-		piping(node);
+		piping(node, data);
 	else if (node->node_type == REDINPT)
 	{
 		input_redirect(node);
-		exec(node->next);
+		exec(node->next, data);
 	}
 	else if (node->node_type == REDOUT)
 	{
 		output_redirect(node);
-		exec(node->next);
+		exec(node->next, data);
 	}
 	else if (node->node_type == REDAPPND)
 	{
 		output_redirect_append(node);
-		exec(node->next);
+		exec(node->next, data);
 	}
 	else if (node->node_type == HEREDOC)
 	{
 		heredoc(node);
-		exec(node->next);
+		exec(node->next, data);
 	}
 	else if (node->node_type == EXEC)
-		execution(node);
+		execution(node, data);
 }
 
-int	pre_exec(t_node *node)
+void	look_4_exit(t_node *node, t_data *data)
 {
-	pid_t	pid;
-	int		wpidstatus;
-	
 	if (node->node_type == EXEC && node->command[0] != NULL &&
-		ft_strncmp(node->command[0], "exit", ft_strlen(node->command[0]) + 1) == 0
+		ft_strncmp(node->command[0], "exit", 5) == 0
 		&& node->command[1] == NULL)
 	{
-		//free everything
+		free_everything(data);
 		printf("exit\n");
 		exit (0);
 	}
+}
+
+int	look_4_unset(t_node *node, t_data *data)
+{
+	int	i;
+	
+	i = 1;
+	if (node->node_type == EXEC && node->command[0] != NULL &&
+		ft_strncmp(node->command[0], "unset", 6) == 0)
+	{
+		while (node->command[i])
+		{
+			unset(node->command[i], data);
+			i++;
+		}
+		return (1);
+	}
+	return (0);
+}
+
+int	look_4_export(t_node *node, t_data *data)
+{
+	int	i;
+	
+	i = 1;
+	if (node->node_type == EXEC && node->command[0] != NULL &&
+		ft_strncmp(node->command[0], "export", 7) == 0)
+	{
+		while (node->command[i])
+		{
+			export(node->command[i], data);
+			i++;
+		}
+		return (1);
+	}
+	return (0);
+}
+
+int	look_4_buildins(t_node *node, t_data *data)
+{
+	int	r_value;
+
+	look_4_exit(node, data);
+	if (look_4_unset(node, data))
+		return (1);
+	if (look_4_export(node ,data))
+		return (1);
+	r_value = look_4_cd(node, data);
+	if (r_value)
+		return (r_value);
+	return (0);
+}
+
+int	pre_exec(t_node *node, t_data *data)
+{
+	pid_t	pid;
+	int		wpidstatus;
+	int		r_value;
+	
+	if (node->node_type == EXEC && !node->command[0])
+		return (0);
+	r_value = look_4_buildins(node, data);
+	if (r_value == 1)
+		return (0);
+	if (r_value == -1)
+		return (1);
 	pid = fork();
 	if (pid == -1)
 		exit (1);
 	if (pid == 0)
-		exec(node);
+		exec(node, data);
 	waitpid(pid, &wpidstatus, 0);
 	if (WIFEXITED(wpidstatus))
 		return (WEXITSTATUS(wpidstatus));
