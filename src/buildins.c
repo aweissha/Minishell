@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 14:34:46 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/07 13:26:39 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/09 14:38:09 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,23 @@ void	env_buildin(t_data *data)
 	}
 }
 
-// was, wenn das argument von export nicht korrekt ist, zb kein = vorhanden ?
 void	export(char *variable, t_data *data)
 {
-	env_list_add_back(&data->env_list, env_list_new(get_var_name(variable), get_var_str(variable)));
+	t_env	*var;
+	char	*var_name;
+
+	if ((ft_strlen(get_var_str(variable)) == 0 && ft_strchr(variable, '=') == NULL)
+		|| ft_strlen(get_var_name(variable)) == 0)
+		return ;
+	var_name = get_var_name(variable);
+	var = find_var(var_name, data);
+	if (var != NULL)
+	{
+		var->var_str = get_var_str(variable);
+		free(var_name);
+	}
+	else
+		env_list_add_back(&data->env_list, env_list_new(var_name, get_var_str(variable)));
 }
 
 void	unset(char *variable, t_data *data)

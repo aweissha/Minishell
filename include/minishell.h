@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/07 16:38:37 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/09 11:51:36 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void	add_exit_code(char *expanded_str, char *exit_code);
 void	copy_over(char **p_expanded_str, char *original_str, t_data *data);
 
 // expander_utils2.c
-t_env	*find_var(char *str, int var_length, t_data *data);
+t_env	*find_var_expander(char *str, t_data *data);
 int		var_length(char *str);
 int		edit_quote_counters(char *str, int *s_quote_open, int *d_quote_open);
 int		count_digits(int n);
@@ -171,6 +171,7 @@ void	ft_tokadd_back(t_token **token_list, t_token *new);
 
 // utils.c
 int		ft_fork(void);
+t_env	*find_var(char *var_name, t_data *data);
 
 //exec.c
 int		pre_exec(t_node *node);

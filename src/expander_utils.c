@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 11:54:47 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/05 12:00:53 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/09 11:38:47 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	add_strlen(char *str, int *d_quote_open, int *s_quote_open, t_data *data)
 	if (*str == '$' && *s_quote_open != 1)
 	{
 		str++;
-		var = find_var(str, var_length(str), data);
+		var = find_var_expander(str, data);
 		if (var != NULL)
 			return (ft_strlen(var->var_str));
 		else if ((*str == ' ' || (*str <= 13 && *str >= 9))
@@ -62,11 +62,10 @@ void	copy_over(char **p_expanded_str, char *original_str, t_data *data)
 	char	*exit_code;
 
 	exit_code = NULL;
-	var = find_var(original_str + 1, var_length(original_str + 1), data);
+	var = find_var_expander(original_str + 1, data);
 	if (var != NULL)
 	{
-		// replace strncpy with libft function
-		strncpy(*p_expanded_str, var->var_str, ft_strlen(var->var_str));
+		strncpy(*p_expanded_str, var->var_str, ft_strlen(var->var_str)); // replace strncpy with libft function
 		*p_expanded_str+= ft_strlen(var->var_str);
 	}
 	else if ((*(original_str + 1) == ' ' || (*(original_str + 1) <= 13 && *(original_str + 1) >= 9))

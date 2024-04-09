@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/07 16:45:02 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/09 14:35:50 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,16 +119,18 @@ int	main(int argc, char **argv, char **env)
 	data = init_data(argc, argv, env);
 	create_env_list(data);
 	
-	// // buildins testing
-	// printf("env_list before export: \n");
-	// env_buildin(data);
-	// // test_env_list(data);
-	// export("test_variable=bliblablub", data);
-	// // unset("myvar", data);
-	// printf("env_list after export: \n");
-	// env_buildin(data);
-	// // test_env_list(data);
-	// return (0);
+	// buildins testing
+	printf("env_list before export: \n");
+	env_buildin(data);
+	// test_env_list(data);
+	export("=bliblablub", data);
+	export("myvar2=", data);
+	// export("myvar2=", data);
+	// unset("myvar", data);
+	printf("env_list after export: \n");
+	env_buildin(data);
+	// test_env_list(data);
+	return (0);
 
 	while (1)
 	{
@@ -155,3 +157,14 @@ int	main(int argc, char **argv, char **env)
 	}
 	return (0);
 }
+/*
+To do:
+- Free everything at exit
+- Function to check input for quotes and maybe other stuff
+- check eval sheet for edge cases
+- integrate buildins
+- Signals
+- check for memory leaks
+- Norminette
+...
+*/

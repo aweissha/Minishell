@@ -6,27 +6,34 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 11:57:18 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/05 12:00:51 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/09 11:42:46 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-
-t_env	*find_var(char *str, int var_length, t_data *data)
+t_env	*find_var_expander(char *str, t_data *data)
 {
 	t_env	*env_list;
+	int		var_len;
+	char	*var;
 
-	if (var_length == 0)
+	var_len = var_length(str);
+	if (var_len == 0)
 		return (NULL);
+	var = strndup(str, var_len);
 	env_list = data->env_list;
 	while (env_list != NULL)
 	{
 	// printf("hello from find_var\n");
-		if (ft_strncmp(str, env_list->var_name, var_length) == 0)
+		if (ft_strcmp(var, env_list->var_name) == 0)
+		{
+			free(var);
 			return (env_list);
+		}
 		env_list = env_list->next;
 	}
+	free(var);
 	return (NULL);
 }
 
