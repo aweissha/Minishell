@@ -3,7 +3,7 @@ NAME = minishell
 LIBFT = libft/libft.a
 SRC_DIR = src/
 
-CC = gcc
+CC = cc
 CFLAGS = -Wall -Werror -Wextra -g -fsanitize=address
 RM = rm -f
 
@@ -11,7 +11,6 @@ RM = rm -f
 SRCS = 		$(SRC_DIR)test.c \
 			$(SRC_DIR)error.c \
 			$(SRC_DIR)free.c \
-			$(SRC_DIR)handle_quotes.c \
 			$(SRC_DIR)init.c \
 			$(SRC_DIR)lexer.c \
 			$(SRC_DIR)parse_utils.c \
@@ -25,6 +24,7 @@ SRCS = 		$(SRC_DIR)test.c \
 			$(SRC_DIR)env_list_utils.c \
 			$(SRC_DIR)env.c \
 			$(SRC_DIR)buildins.c \
+			$(SRC_DIR)syntax_check.c \
 			libft/get_next_line.c \
 			libft/get_next_line_utils.c \
 			# $(SRC_DIR)error.c \

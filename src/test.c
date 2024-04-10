@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/09 15:54:00 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/10 16:34:43 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 
 void	test_parse_tree(t_node *node)
 {
+	if (node == NULL)
+	{
+		printf("end of parse_tree reched\n");
+		return ;
+	}
 	if (node->node_type == PIPE)
 	{
 		printf("hello from PIPE node\n");
@@ -134,19 +139,36 @@ int	main(int argc, char **argv, char **env)
 
 	while (1)
 	{
+		signal(SIGQUIT, SIG_IGN);
 		input = readline("\x1b[32mMinishell $> \x1b[0m");
+		if (!input)
+		{
+			free_everything(data);
+			printf("exit\n");
+			return (0);
+		}
 		// check for open quotes -> if open quotes abort
 		add_history(input);
 		// printf("check\n");
 		lexer(input, data);
+		// syntax_check(data);
 		free(input);
 
 		// tmp = data->token_list;
 		// while (tmp != NULL)
 		// {
-			// printf("type: %u\ntoken_str: %s\n", tmp->token_type, tmp->token_str);
+		// 	printf("type: %u\ntoken_str: %s\n", tmp->token_type, tmp->token_str);
 		// 	tmp = tmp->next;
 		// }
+		// printf("syntax_check: %d\n", syntax_check(data));
+		// return (0);
+
+		if (syntax_check(data) == 1)
+		{
+			free_token_list(data->token_list);
+			data->token_list = NULL;
+			continue ;
+		}
 		expander(data);
 		data->parse_tree = parse_pipe(data->token_list);
 		data->token_list = NULL;
@@ -159,10 +181,7 @@ int	main(int argc, char **argv, char **env)
 }
 /*
 To do:
-- Free everything at exit
-- Function to check input for quotes and maybe other stuff
 - check eval sheet for edge cases
-- integrate buildins
 - Signals
 - check for memory leaks
 - Norminette

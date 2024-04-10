@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 12:03:49 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/07 16:36:49 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/10 16:37:44 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,18 @@ void	free_token(t_token	*token)
 {
 	free(token->token_str);
 	free(token);
+}
+
+void	free_token_list(t_token *token_list)
+{
+	t_token	*tmp;
+	
+	while (token_list != NULL)
+	{
+		tmp = token_list->next;
+		free_token(token_list);
+		token_list = tmp;
+	}
 }
 
 void	free_env(t_env *env_node)
@@ -54,6 +66,8 @@ void	free_node(t_node *node)
 
 void	free_parse_tree(t_node *node)
 {
+	if (node == NULL)
+		return ;
 	if (node->node_type == PIPE)
 	{
 		free_parse_tree(node->left);

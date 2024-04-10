@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/19 14:24:02 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/05 15:48:04 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/10 11:06:20 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,44 +119,49 @@ type classify_char(char c)
 	if (c == '|')
 		return (PIPE);
 	else if (c == '<')
-		return (REDIR);
+		return (REDINPT);
 	else if (c == '>')
-		return (REDIR);
-	else if (isspace(c))
+		return (REDOUT);
+	else if (isspace(c)) //isspace replacen
 		return (TOKEN_SPACE);
 	return (WORD);
 }
 
-void	add_token(t_token **token_list, char *str, char *str_start)
+int	add_token(t_token **token_list, char *str)
 {
 	type	token_type;
 	int		i;
+	int		s_quote_open;
+	int		d_quote_open;
 
-	i = 0;
+	s_quote_open = 0;
+	d_quote_open = 0;
 	token_type = classify_char(*str);
+	i = 0;
 	while ((classify_char(str[i]) == token_type && str[i] != '\0')
-		|| (in_quotes(str_start, &str[i]) == 1 && str[i] != '\0'))
-		i++;
-	// printf("number counted\n");
-	ft_tokadd_back(token_list, ft_toknew(strndup(str, i), token_type));
-	// printf("token added\n");
+		|| ((s_quote_open == 1 || d_quote_open == 1) && str[i] != '\0'))
+		{
+			set_quote_flags(&str[i], &s_quote_open, &d_quote_open);
+			i++;
+			if ((i > 1 && token_type == REDINPT)
+				|| (i > 1 && token_type == REDOUT)
+				|| (i > 0 && token_type == PIPE))
+				break ;
+		}
+	if (token_type == REDINPT || token_type == REDOUT)
+		ft_tokadd_back(token_list, ft_toknew(strndup(str, i), REDIR));
+	else
+		ft_tokadd_back(token_list, ft_toknew(strndup(str, i), token_type));
+	return (i);
 }
 
 void	lexer(char *input, t_data *data)
 {
-	type	token_type;
-	char	*input_start;
-
-	input_start = input;
 	while (input && *input != '\0')
 	{
 		while (classify_char(*input) == TOKEN_SPACE && *input != '\0')
 			input++;
 		if (*input != '\0')
-			add_token(&data->token_list, input, input_start);
-		token_type = classify_char(*input);
-		while ((classify_char(*input) == token_type && *input != '\0')
-			|| (in_quotes(input_start, input) == 1 && *input != '\0'))
-			input++;
+			input += add_token(&data->token_list, input);
 	}
 }

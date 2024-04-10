@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 11:45:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/05 11:55:54 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/09 16:01:31 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@ void	expander(t_data *data)
 	t_token	*token_list;
 
 	token_list = data->token_list;
+	if (token_list == NULL)
+		return ;
 	while (token_list != NULL)
 	{
 		if (token_list->token_type == WORD)

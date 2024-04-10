@@ -6,29 +6,28 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:22:25 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/07 11:37:18 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/10 15:08:41 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void	update_token_list(t_token **token_list, t_token *redir_token)
+void	update_token_list(t_token **token_list)
 {
 	t_token	*tmp;
 	t_token	*tmp2;
 
-	redir_token = NULL; // change
+	tmp = *token_list;
 	if ((*token_list)->token_type == REDIR)
 	{
-		tmp = *token_list;
 		*token_list = (*token_list)->next->next;
-		(*token_list)->previous = NULL;
+		if (*token_list != NULL)
+			(*token_list)->previous = NULL;
 		free_token(tmp->next);
 		free_token(tmp);
 	}
 	else
 	{
-		tmp = *token_list;
 		while (tmp->next->token_type != REDIR)
 			tmp = tmp->next;
 		tmp2 = tmp;

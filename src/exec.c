@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:52:02 by sparth            #+#    #+#             */
-/*   Updated: 2024/04/09 15:27:30 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/10 16:25:36 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ char	*path_check(char *cmd, char *path)
 	return (path_check2(cmd, check));
 }
 
-void	input_redirect(t_node *node)
+void	input_redirect(t_node *node, t_data *data)
 {
 	int	fd_in;
 
@@ -133,9 +133,13 @@ void	input_redirect(t_node *node)
 		exit (1);
 	if (close(fd_in) == -1)
 		exit (1);
+	if (node->next)
+		exec(node->next, data);
+	else
+		exit (0);
 }
 
-void	heredoc(t_node *node)
+void	heredoc(t_node *node, t_data *data)
 {
 	int		fd[2];
 	char	*line;
@@ -160,9 +164,13 @@ void	heredoc(t_node *node)
 		exit (1);
 	if (close(fd[0]) == -1 || close(fd[1]) == -1)
 		exit (1);
+	if (node->next)
+		exec(node->next, data);
+	else
+		exit (0);
 }
 
-void	output_redirect(t_node *node)
+void	output_redirect(t_node *node, t_data *data)
 {
 	int fd_out;
 	
@@ -176,9 +184,13 @@ void	output_redirect(t_node *node)
 		exit(1);
 	if (close(fd_out) == -1)
 		exit (1);
+	if (node->next)
+		exec(node->next, data);
+	else
+		exit (0);
 }
 
-void	output_redirect_append(t_node *node)
+void	output_redirect_append(t_node *node, t_data *data)
 {
 	int fd_out;
 	
@@ -192,6 +204,10 @@ void	output_redirect_append(t_node *node)
 		exit(1);
 	if (close(fd_out) == -1)
 		exit (1);
+	if (node->next)
+		exec(node->next, data);
+	else
+		exit (0);
 }
 
 void piping(t_node *node, t_data *data)
@@ -248,6 +264,54 @@ void	path_error_message(char *error)
 		fprintf(stderr, "%s%s: %s\n", "minishell: ", cmd_cut(error), "command not found");
 }
 
+bool	check_n_option(char *option)
+{
+	int	i;
+	
+	i = 2;
+	if (option[0] == '-' && option[1] == 'n')
+	{
+		while (option[i])
+		{
+			if (option[i] != 'n')
+				return (0);
+			i++;
+		}
+		return (1);
+	}
+	else
+		return (0);
+}
+
+void	echo(t_node *node)
+{
+	int	i;
+
+	i = 1;
+	if (!node->command[i])
+		printf("\n");
+	else if (check_n_option(node->command[i]))
+	{
+		while (node->command[++i])
+		{
+			printf("%s", node->command[i]);
+			if (node->command[i + 1])
+				printf(" ");
+		}
+	}
+	else
+	{
+		while (node->command[i])
+		{
+			printf("%s", node->command[i++]);
+			if (node->command[i])
+				printf(" ");
+		}
+		printf("\n");
+	}
+	exit (0);
+}
+
 void	check_if_buildin(t_node *node, t_data *data)
 {
 	if (ft_strncmp (node->command[0], "env", 4) == 0)
@@ -259,20 +323,21 @@ void	check_if_buildin(t_node *node, t_data *data)
 		}
 		exit (0);
 	}
-	// if (ft_strncmp(node->command[0], "echo", 4) == 0)
-	// 	echo(node);
+	if ((node->command[0][0] == 'e' || node->command[0][0] == 'E')
+		&& (node->command[0][1] == 'c' || node->command[0][1] == 'C')
+		&& (node->command[0][2] == 'h' || node->command[0][2] == 'H')
+		&& (node->command[0][3] == 'o' || node->command[0][3] == 'O')
+		&& node->command[0][4] == '\0')
+		echo(node);
 	if (ft_strncmp (node->command[0], "pwd", 4) == 0)
 	{
 		printf("%s\n", getcwd(NULL, PATH_MAX));
 		exit (0);
 	}
-	if (ft_strncmp (node->command[0], "exit", 5) == 0)
-		exit (0);
-	if (ft_strncmp (node->command[0], "cd", 3) == 0)
-		exit (0);
-	if (ft_strncmp (node->command[0], "unset", 6) == 0)
-		exit (0);
-	if (ft_strncmp (node->command[0], "export", 7) == 0)
+	if (ft_strncmp (node->command[0], "exit", 5) == 0
+		|| ft_strncmp (node->command[0], "cd", 3) == 0
+		|| ft_strncmp (node->command[0], "unset", 6) == 0
+		|| ft_strncmp (node->command[0], "export", 7) == 0)
 		exit (0);
 }
 
@@ -457,29 +522,17 @@ int	look_4_cd(t_node *node, t_data *data)
 
 void	exec(t_node *node, t_data *data)
 {
-	// node->pipe_end = 2;
+	
 	if (node->node_type == PIPE)
 		piping(node, data);
 	else if (node->node_type == REDINPT)
-	{
-		input_redirect(node);
-		exec(node->next, data);
-	}
+		input_redirect(node, data);
 	else if (node->node_type == REDOUT)
-	{
-		output_redirect(node);
-		exec(node->next, data);
-	}
+		output_redirect(node, data);
 	else if (node->node_type == REDAPPND)
-	{
-		output_redirect_append(node);
-		exec(node->next, data);
-	}
+		output_redirect_append(node, data);
 	else if (node->node_type == HEREDOC)
-	{
-		heredoc(node);
-		exec(node->next, data);
-	}
+		heredoc(node, data);
 	else if (node->node_type == EXEC)
 		execution(node, data);
 }
@@ -547,13 +600,25 @@ int	look_4_buildins(t_node *node, t_data *data)
 	return (0);
 }
 
+void	sig_child_int(int sig)
+{
+	(void)sig;
+	exit(130);
+}
+
+void	sig_child_quit(int sig)
+{
+	(void)sig;
+	exit(131);
+}
+
 int	pre_exec(t_node *node, t_data *data)
 {
 	pid_t	pid;
 	int		wpidstatus;
 	int		r_value;
 	
-	if (node->node_type == EXEC && !node->command[0])
+	if (node == NULL)
 		return (0);
 	r_value = look_4_buildins(node, data);
 	if (r_value == 1)
@@ -564,9 +629,15 @@ int	pre_exec(t_node *node, t_data *data)
 	if (pid == -1)
 		exit (1);
 	if (pid == 0)
+	{
+		signal(SIGINT, sig_child_int);
+		signal(SIGQUIT, sig_child_quit);
 		exec(node, data);
+	}
 	waitpid(pid, &wpidstatus, 0);
 	if (WIFEXITED(wpidstatus))
-		return (WEXITSTATUS(wpidstatus));
+		return (WTERMSIG(wpidstatus));
+	// if (WIFSIGNALED(wpidstatus))
+	// 	return (WEXITSTATUS(wpidstatus));
 	return (86);
 }

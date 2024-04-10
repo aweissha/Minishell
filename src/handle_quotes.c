@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_quotes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sparth <sparth@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:34:01 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/04 14:47:49 by sparth           ###   ########.fr       */
+/*   Updated: 2024/04/09 16:40:51 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	quotes_right(char *start, char *position, char c)
 
 int	in_quotes(char *start, char *position)
 {
-	// printf("hello from in_quotes\n");
+	printf("hello from in_quotes\n");
 	if ((quotes_left(start, position, 34) % 2) == 1 
 		&& quotes_right(start, position, 34) > 0 
 		&& *position != 34)

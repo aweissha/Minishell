@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/09 15:00:14 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/10 16:24:13 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <string.h>
 #include "../libft/get_next_line.h"
 #include <limits.h>
+#include <signal.h>
 
 
 typedef enum
@@ -133,17 +134,13 @@ int		count_digits(int n);
 
 // free.c
 void	free_token(t_token	*token);
+void	free_token_list(t_token *token_list);
 void	free_env(t_env *env_node);
 void	free_str_array(char **array);
 void	free_node(t_node *node);
 void	free_parse_tree(t_node *node);
 void	free_env_list(t_env *env_list);
 void	free_everything(t_data *data);
-
-// handle_quotes.c
-int		quotes_left(char *start, char *position, char c);
-int		quotes_right(char *start, char *position, char c);
-int		in_quotes(char *start, char *position);
 
 // init.c
 t_node	*init_node(type node_type);
@@ -155,7 +152,7 @@ type	tok_type(char *token_str);
 void	lexer(char *input, t_data *data);
 
 // parse_utils.c
-void	update_token_list(t_token **token_list, t_token *redir_token);
+void	update_token_list(t_token **token_list);
 void	config_redir_node(t_token *redir_token, t_node *redir_node);
 t_token	*find_token(t_token	*token_list, type token_type);
 
@@ -178,5 +175,11 @@ t_env	*find_var(char *var_name, t_data *data);
 //exec.c
 int		pre_exec(t_node *node, t_data *data);
 void	exec(t_node *node, t_data *data);
+void	set_quote_flags(char *str, int *s_quote_open, int *d_quote_open);
+
+// syntax_check.c
+int	quotes_wrong(char *str);
+int	check_quotes(t_token *token_list);
+int	syntax_check(t_data *data);
 
 #endif
