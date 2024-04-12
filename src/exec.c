@@ -5,8 +5,20 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/12 18:25:30 by aweissha          #+#    #+#             */
+/*   Updated: 2024/04/12 18:25:33 by aweissha         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sparth <sparth@student.42heilbronn.de>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:52:02 by sparth            #+#    #+#             */
-/*   Updated: 2024/04/10 16:25:36 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/11 21:12:10 by sparth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +138,7 @@ void	input_redirect(t_node *node, t_data *data)
 	fd_in = open(node->infile, O_RDONLY);
 	if (fd_in == -1)
 	{
-		printf("error opening infile\n");
+		fprintf(stderr, "error opening infile\n");
 		exit(1);
 	}
 	if (dup2(fd_in, STDIN_FILENO) == -1)
@@ -177,7 +189,7 @@ void	output_redirect(t_node *node, t_data *data)
 	fd_out = open(node->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd_out == -1)
 	{
-		printf("error opening outfile\n");
+		fprintf(stderr, "error opening outfile\n");
 		exit (1);
 	}
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
@@ -197,7 +209,7 @@ void	output_redirect_append(t_node *node, t_data *data)
 	fd_out = open(node->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd_out == -1)
 	{
-		printf("error opening outfile\n");
+		fprintf(stderr, "error opening outfile\n");
 		exit (1);
 	}
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
@@ -312,6 +324,15 @@ void	echo(t_node *node)
 	exit (0);
 }
 
+void	pwd(void)
+{
+	char *cwd;
+	cwd = getcwd(NULL, PATH_MAX);
+	printf("%s\n", cwd);
+	free(cwd);
+	exit (0);
+}
+
 void	check_if_buildin(t_node *node, t_data *data)
 {
 	if (ft_strncmp (node->command[0], "env", 4) == 0)
@@ -330,10 +351,7 @@ void	check_if_buildin(t_node *node, t_data *data)
 		&& node->command[0][4] == '\0')
 		echo(node);
 	if (ft_strncmp (node->command[0], "pwd", 4) == 0)
-	{
-		printf("%s\n", getcwd(NULL, PATH_MAX));
-		exit (0);
-	}
+		pwd();
 	if (ft_strncmp (node->command[0], "exit", 5) == 0
 		|| ft_strncmp (node->command[0], "cd", 3) == 0
 		|| ft_strncmp (node->command[0], "unset", 6) == 0
@@ -402,32 +420,34 @@ void	string_cut(char *s, int flag)
 void	change_pwds(t_data *data, bool flag)
 {
 	char *temp;
+	char *cwd;
 	
+	cwd =  getcwd(NULL, PATH_MAX);
 	if (flag == 0)
 	{
-			temp = ft_strjoin("OLDPWD=", getcwd(NULL, PATH_MAX));
-			if (!temp)
-			{
-				printf("ft_strjoin failed\n");
-				exit (1);
-			}
-			export(temp, data);
-			free(temp);
+		temp = ft_strjoin("OLDPWD=", cwd);
+		if (!temp)
+		{
+			printf("ft_strjoin failed\n");
+			exit (1);
+		}
 	}
 	if (flag == 1)
 	{
-			temp = ft_strjoin("PWD=", getcwd(NULL, PATH_MAX));
-			if (!temp)
-			{
-				printf("ft_strjoin failed\n");
-				exit (1);
-			}
-			export(temp, data);
-			free(temp);
+		temp = ft_strjoin("PWD=", cwd);
+		if (!temp)
+		{
+			printf("ft_strjoin failed\n");
+			exit (1);
+		}
 	}
+	free(cwd);
+	export(temp, data);
+	free(temp);
 }
 void	prep_dir_change(t_data *data, int flag, char *path)
 {
+	char *cwd;
 	if (path)
 	{
 			change_pwds(data, 0);
@@ -441,7 +461,9 @@ void	prep_dir_change(t_data *data, int flag, char *path)
 	else
 	{
 		change_pwds(data, 0);
-		string_cut(getcwd(NULL, PATH_MAX), flag);
+		cwd = getcwd(NULL, PATH_MAX);
+		string_cut(cwd, flag);
+		free(cwd);
 		change_pwds(data, 1);
 	}
 }
@@ -465,6 +487,7 @@ bool	switch_between_dir(t_data *data)
 				exit (1);
 			}
 			temp = ft_strjoin("OLDPWD=", old_pwd);
+			free(old_pwd);
 			if (!temp)
 			{
 				printf("ft_strjoin failed\n");
@@ -485,7 +508,7 @@ int	path_change(char *cmd, t_data *data)
 {
 	if (access(cmd, F_OK))
 	{
-		printf("minishell: cd: no such file or directory: %s\n", cmd);
+		fprintf(stderr, "minishell: cd: no such file or directory: %s\n", cmd);
 		return (-1);
 	}
 	prep_dir_change(data, 0, cmd);
@@ -603,13 +626,13 @@ int	look_4_buildins(t_node *node, t_data *data)
 void	sig_child_int(int sig)
 {
 	(void)sig;
-	exit(130);
+	exit(1);
 }
 
 void	sig_child_quit(int sig)
 {
 	(void)sig;
-	exit(131);
+	exit(1);
 }
 
 int	pre_exec(t_node *node, t_data *data)
@@ -636,8 +659,14 @@ int	pre_exec(t_node *node, t_data *data)
 	}
 	waitpid(pid, &wpidstatus, 0);
 	if (WIFEXITED(wpidstatus))
-		return (WTERMSIG(wpidstatus));
-	// if (WIFSIGNALED(wpidstatus))
-	// 	return (WEXITSTATUS(wpidstatus));
+		return (WEXITSTATUS(wpidstatus));
+	if (WIFSIGNALED(wpidstatus))
+	{
+		if (128 + WTERMSIG(wpidstatus) == 131)
+			write (2, "Quit: 3", 7);
+		write(2, "\n", 1);
+		return (128 + WTERMSIG(wpidstatus));
+	}
 	return (86);
 }
+

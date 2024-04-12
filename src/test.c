@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/12 15:53:54 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/12 18:35:23 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,31 +115,33 @@ int	main(int argc, char **argv, char **env)
 	test_parse_tree(data->parse_tree);
 }
 */
+
+
+void    sig_action(int sig)
+{
+    (void)sig;
+    write(1, "\n", 1);
+    rl_replace_line("", 1);
+    rl_on_new_line();
+    rl_redisplay();
+        return ;
+}
+
+
 int	main(int argc, char **argv, char **env)
 {
 	t_data	*data;
-	// t_token	*tmp;
 	char	*input;
 
 	data = init_data(argc, argv, env);
 	create_env_list(data);
 	
-	// // buildins testing
-	// printf("env_list before export: \n");
-	// env_buildin(data);
-	// // test_env_list(data);
-	// export("=bliblablub", data);
-	// export("myvar2=", data);
-	// // export("myvar2=", data);
-	// // unset("myvar", data);
-	// printf("env_list after export: \n");
-	// env_buildin(data);
-	// // test_env_list(data);
-	// return (0);
 
 	while (1)
 	{
-		signal(SIGQUIT, SIG_IGN);
+		rl_catch_signals = 0;
+        signal(SIGQUIT, SIG_IGN);
+        signal(SIGINT, sig_action);
 		input = readline("\x1b[32mMinishell $> \x1b[0m");
 		if (!input)
 		{
@@ -147,21 +149,11 @@ int	main(int argc, char **argv, char **env)
 			printf("exit\n");
 			return (0);
 		}
-		// check for open quotes -> if open quotes abort
+		signal(SIGINT, SIG_IGN);
 		add_history(input);
-		// printf("check\n");
 		lexer(input, data);
-		// syntax_check(data);
 		free(input);
 
-		// tmp = data->token_list;
-		// while (tmp != NULL)
-		// {
-		// 	printf("type: %u\ntoken_str: %s\n", tmp->token_type, tmp->token_str);
-		// 	tmp = tmp->next;
-		// }
-		// printf("syntax_check: %d\n", syntax_check(data));
-		// return (0);
 
 		if (syntax_check(data) == 1)
 		{
@@ -184,7 +176,7 @@ To do:
 - exit codes does no work anymore(value in data struct does not get changed)
 - free memory, when command fails (unset PATH->ls)
 - check eval sheet for edge cases
-- Signals
+- clean history
 - check for memory leaks
 - Norminette
 ...

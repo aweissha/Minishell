@@ -1,10 +1,15 @@
 NAME = minishell
 
-LIBFT = libft/libft.a
+
+LIBFT	= libft/
+
+LIBFTTARGET	= $(LIBFT)libft.a
+
 SRC_DIR = src/
 
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g
+CFLAGS = -Wall -Werror -Wextra -g 
+# -fsanitize=address
 RM = rm -f
 
 
@@ -32,12 +37,17 @@ SRCS = 		$(SRC_DIR)test.c \
 
 OBJS = $(SRCS:.c=.o)
 
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -lreadline $(LIBFT) -o $(NAME)
+	@$(MAKE) -C $(LIBFT)
+	@$(CC) $(CFLAGS) $(OBJS) -lreadline -o $(NAME) $(LIBFTTARGET)
 
 all: $(NAME)
 
 clean:
+	@$(MAKE) -C $(LIBFT) fclean
 	$(RM) $(OBJS)
 
 fclean: clean
