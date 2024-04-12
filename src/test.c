@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/12 18:35:23 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/12 18:52:14 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ int	main(int argc, char **argv, char **env)
 		expander(data);
 		data->parse_tree = parse_pipe(data->token_list);
 		data->token_list = NULL;
-		// test_parse_tree(data->parse_tree);
+		test_parse_tree(data->parse_tree);
 		data->last_exit_code = pre_exec(data->parse_tree, data);
 		free_parse_tree(data->parse_tree);
 		data->parse_tree = NULL;

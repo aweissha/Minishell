@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 11:54:47 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/09 11:38:47 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/12 19:08:25 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	copy_over(char **p_expanded_str, char *original_str, t_data *data)
 		*p_expanded_str+= ft_strlen(var->var_str);
 	}
 	else if ((*(original_str + 1) == ' ' || (*(original_str + 1) <= 13 && *(original_str + 1) >= 9))
-		|| *(original_str + 1) == '\0')
+		|| *(original_str + 1) == '\0' || *(original_str + 1) == '\"')
 	{
 		**p_expanded_str = '$';
 		(*p_expanded_str)++;
