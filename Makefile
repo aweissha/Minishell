@@ -4,7 +4,7 @@ LIBFT = libft/libft.a
 SRC_DIR = src/
 
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g -fsanitize=address
+CFLAGS = -Wall -Werror -Wextra -g
 RM = rm -f
 
 
@@ -33,7 +33,7 @@ SRCS = 		$(SRC_DIR)test.c \
 OBJS = $(SRCS:.c=.o)
 
 $(NAME): $(OBJS)
-	$(CC) -lreadline $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -lreadline $(LIBFT) -o $(NAME)
 
 all: $(NAME)
 

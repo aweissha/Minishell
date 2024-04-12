@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/10 16:34:43 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/12 15:53:54 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,6 +181,8 @@ int	main(int argc, char **argv, char **env)
 }
 /*
 To do:
+- exit codes does no work anymore(value in data struct does not get changed)
+- free memory, when command fails (unset PATH->ls)
 - check eval sheet for edge cases
 - Signals
 - check for memory leaks

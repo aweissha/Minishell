@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/10 16:24:13 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/12 13:49:24 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 #include "../libft/get_next_line.h"
 #include <limits.h>
 #include <signal.h>
-
+#include <sys/wait.h>
 
 typedef enum
 {

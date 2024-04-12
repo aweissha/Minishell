@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 12:03:49 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/10 16:37:44 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/12 14:38:00 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void	free_str_array(char **array)
 	while (array[i] != NULL)
 	{
 		free(array[i]);
+		printf("str freed \n");
 		i++;
 	}
 	free(array);
@@ -53,7 +54,10 @@ void	free_str_array(char **array)
 void	free_node(t_node *node)
 {
 	if (node->node_type == EXEC)
+	{
 		free_str_array(node->command);
+		printf("array freed \n");
+	}
 	else if (node->node_type == REDINPT)
 		free(node->infile);
 	else if (node->node_type == REDOUT
@@ -61,6 +65,7 @@ void	free_node(t_node *node)
 		free(node->outfile);
 	else if (node->node_type == HEREDOC)
 		free(node->limiter);
+	printf("node of type %d freed\n", node->node_type);
 	free(node);
 }
 
