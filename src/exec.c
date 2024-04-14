@@ -5,20 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/12 18:25:30 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/14 14:55:49 by aweissha         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   exec.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: sparth <sparth@student.42heilbronn.de>     +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:52:02 by sparth            #+#    #+#             */
-/*   Updated: 2024/04/11 21:12:10 by sparth           ###   ########.fr       */
+/*   Updated: 2024/04/14 19:10:25 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +126,10 @@ void	input_redirect(t_node *node, t_data *data)
 	fd_in = open(node->infile, O_RDONLY);
 	if (fd_in == -1)
 	{
-		fprintf(stderr, "error opening infile\n");
+		if (access(node->infile, F_OK) == 0)
+			fprintf(stderr, "minishell: %s: Permission denied\n", node->infile);
+		else
+			fprintf(stderr, "minishell: %s: No such file or directory\n", node->infile);
 		exit(1);
 	}
 	if (dup2(fd_in, STDIN_FILENO) == -1)
@@ -189,7 +180,10 @@ void	output_redirect(t_node *node, t_data *data)
 	fd_out = open(node->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd_out == -1)
 	{
-		fprintf(stderr, "error opening outfile\n");
+		if (access(node->outfile, F_OK) == 0)
+			fprintf(stderr, "minishell: %s: Permission denied\n", node->outfile);
+		else
+			fprintf(stderr, "minishell: %s: No such file or directory\n", node->outfile);
 		exit (1);
 	}
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
@@ -209,7 +203,10 @@ void	output_redirect_append(t_node *node, t_data *data)
 	fd_out = open(node->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd_out == -1)
 	{
-		fprintf(stderr, "error opening outfile\n");
+		if (access(node->outfile, F_OK) == 0)
+			fprintf(stderr, "minishell: %s: Permission denied\n", node->outfile);
+		else
+			fprintf(stderr, "minishell: %s: No such file or directory\n", node->outfile);
 		exit (1);
 	}
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
@@ -268,6 +265,7 @@ void piping(t_node *node, t_data *data)
 
 void	path_error_message(char *error)
 {
+	printf("test: %s", error);
 	if (access(cmd_cut(error), X_OK) && access(cmd_cut(error), R_OK) == 0)
 		fprintf(stderr, "%s%s: %s\n", "minishell: ", cmd_cut(error), strerror(13));
 	else if (strncmp(error, "./", 2) == 0)
@@ -370,15 +368,17 @@ void	execution(t_node *node, t_data *data)
 	if (!path)
 		path_error_message(node->command[0]);
 	execve(path, node->command, NULL);
-	// fprintf(stderr, "execve failed !\n");
 	if (access((path), X_OK) && access((path), W_OK) == 0)
 		exit (126);
-	// if (access((node->command[0]), X_OK) && access((node->command[0]), W_OK) == 0)
-	// 	exit (126);
+	if (strncmp(node->command[0], "./", 2) == 0 && access((node->command[0]), X_OK) && access((node->command[0]), W_OK) == 0)
+		exit (126);
 	if (stat(path, &dir_check) == 0)
 	{
 		if (S_ISDIR(dir_check.st_mode))
+		{
+			fprintf(stderr, "%s%s: is a directory\n", "minishell: ", node->command[0]);
 			exit(126);
+		}
 	}
 	exit(127);
 	
@@ -516,7 +516,7 @@ int	path_change(char *cmd, t_data *data)
 {
 	if (access(cmd, F_OK))
 	{
-		fprintf(stderr, "minishell: cd: no such file or directory: %s\n", cmd);
+		fprintf(stderr, "minishell: cd: %s: No such file or directory\n", cmd);
 		return (-1);
 	}
 	prep_dir_change(data, 0, cmd);
@@ -620,7 +620,10 @@ bool	look_4_exit(t_node *node, t_data *data)
 				exit (255);
 			}
 			else
-				fprintf(stderr, "exit\nminishell: exit: too many arguments\n");
+			{
+				printf("exit\n");
+				fprintf(stderr, "minishell: exit: too many arguments\n");
+			}
 			return (1);
 		}
 		
@@ -673,7 +676,10 @@ int	look_4_export(t_node *node, t_data *data)
 		if (node->command[1] == NULL)
 			return (1);
 		if (!export_check(node->command[1]))
+		{
+			fprintf(stderr, "minishell: export: `%s': not a valid identifier\n", node->command[1]);
 			return (-1);
+		}
 		while (node->command[i])
 		{
 			export(node->command[i], data);
