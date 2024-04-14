@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 11:45:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/14 15:27:12 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/14 16:00:24 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,20 +61,33 @@ char	*expand_str(t_token *token, t_data *data)
 	return (expanded_str);
 }
 
-// void	remove_empty_tokens(t_data *data)
-// {
-// 	t_token	*token_list;
+void	remove_empty_tokens(t_data *data)
+{
+	t_token	*token_list;
+	t_token	*tmp;
 
-// 	token_list = data->token_list;
-// 	while (token_list != NULL)
-// 	{
-// 		if (token_list->token_type == WORD)
-// 		{
-
-// 		}
-// 		token_list = token_list->next;
-// 	}
-// }
+	token_list = data->token_list;
+	while (token_list != NULL && ft_strlen(token_list->token_str) == 0)
+	{
+		data->token_list = token_list->next;
+		free_token(token_list);
+		token_list = data->token_list;
+		if (token_list != NULL)
+			token_list->previous = NULL;
+	}
+	while (token_list != NULL)
+	{
+		if (ft_strlen(token_list->token_str) == 0)
+		{
+			tmp = token_list->previous;
+			tmp->next = token_list->next;
+			if (token_list->next != NULL)
+				token_list->next->previous = tmp;	
+			free_token(token_list);
+		}
+		token_list = token_list->next;
+	}
+}
 
 void	expander(t_data *data)
 {
@@ -94,5 +107,5 @@ void	expander(t_data *data)
 		}
 		token_list = token_list->next;
 	}
-	// remove_empty_tokens(data);
+	remove_empty_tokens(data);
 }

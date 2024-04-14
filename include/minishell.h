@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/14 14:59:32 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/14 16:00:12 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ void	ft_error(char *message, int code);
 int		strlen_expanded(char *str, t_data *data);
 void	create_expanded_str(char *exp_str, char *orig_str, t_data *data);
 char	*expand_str(t_token *token, t_data *data);
+void	remove_empty_tokens(t_data *data);
 void	expander(t_data *data);
 
 // expander_utils.c

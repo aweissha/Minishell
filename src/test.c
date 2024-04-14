@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/14 15:27:02 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/14 15:58:58 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,15 +154,6 @@ int	main(int argc, char **argv, char **env)
 		add_history(input);
 		lexer(input, data);
 		free(input);
-		
-	// // print token list before expansion
-	// tmp = data->token_list;
-	// while (tmp != NULL)
-	// {
-	// 	printf("type: %u\ntoken_str: %s\n", tmp->token_type, tmp->token_str);
-	// 	tmp = tmp->next;
-	// }
-
 		if (syntax_check(data) == 1)
 		{
 			free_token_list(data->token_list);
@@ -170,19 +161,9 @@ int	main(int argc, char **argv, char **env)
 			continue ;
 		}
 		expander(data);
-
-	// // print token list after expansion
-	// tmp = data->token_list;
-	// while (tmp != NULL)
-	// {
-	// 	printf("type: %u\ntoken_str: %s\n", tmp->token_type, tmp->token_str);
-	// 	tmp = tmp->next;
-	// }
-
-		
 		data->parse_tree = parse_pipe(data->token_list);
 		data->token_list = NULL;
-		test_parse_tree(data->parse_tree);
+		// test_parse_tree(data->parse_tree);
 		data->last_exit_code = pre_exec(data->parse_tree, data);
 		free_parse_tree(data->parse_tree);
 		data->parse_tree = NULL;
