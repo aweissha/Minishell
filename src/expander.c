@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 11:45:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/09 16:01:31 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/14 15:27:12 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,34 +23,31 @@ int	strlen_expanded(char *str, t_data *data)
 	i = 0;
 	while (*str != '\0')
 	{
-		// printf("hello\n");
-		// printf("%d\n", i);
-		// printf("%p\n", str);
-		i+= add_strlen(str, &d_quote_open, &s_quote_open, data);
-		str+= add_str(str, &s_quote_open);
+		i += add_strlen(str, &d_quote_open, &s_quote_open, data);
+		str += add_str(str, &s_quote_open);
 	}
 	return (i);
 }
 
-void	create_expanded_str(char *expanded_str, char *original_str, t_data *data)
+void	create_expanded_str(char *exp_str, char *orig_str, t_data *data)
 {
 	int		d_quote_open;
 	int		s_quote_open;
 
 	d_quote_open = 0;
 	s_quote_open = 0;
-	while (*original_str != '\0')
+	while (*orig_str != '\0')
 	{
-		if (*original_str == '$' && s_quote_open != 1)
-			copy_over(&expanded_str, original_str, data);
-		else if (edit_quote_counters(original_str, &s_quote_open, &d_quote_open) == 1)
+		if (*orig_str == '$' && s_quote_open != 1)
+			copy_over(&exp_str, orig_str, data);
+		else if (edit_quote_counters(orig_str, &s_quote_open, &d_quote_open) == 1)
 		{
-			*expanded_str = *original_str;
-			expanded_str++;
+			*exp_str = *orig_str;
+			exp_str++;
 		}
-		original_str += add_str(original_str, &s_quote_open);
+		orig_str += add_str(orig_str, &s_quote_open);
 	}
-	*expanded_str = '\0';
+	*exp_str = '\0';
 }
 
 char	*expand_str(t_token *token, t_data *data)
@@ -63,6 +60,21 @@ char	*expand_str(t_token *token, t_data *data)
 	create_expanded_str(expanded_str, token->token_str, data);
 	return (expanded_str);
 }
+
+// void	remove_empty_tokens(t_data *data)
+// {
+// 	t_token	*token_list;
+
+// 	token_list = data->token_list;
+// 	while (token_list != NULL)
+// 	{
+// 		if (token_list->token_type == WORD)
+// 		{
+
+// 		}
+// 		token_list = token_list->next;
+// 	}
+// }
 
 void	expander(t_data *data)
 {
@@ -82,4 +94,5 @@ void	expander(t_data *data)
 		}
 		token_list = token_list->next;
 	}
+	// remove_empty_tokens(data);
 }

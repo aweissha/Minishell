@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:22:25 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/10 15:08:41 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/14 14:21:00 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	update_token_list(t_token **token_list)
 void	config_redir_node(t_token *redir_token, t_node *redir_node)
 {
 	char	*token_str;
-	
+
 	token_str = redir_token->token_str;
 	if (ft_strcmp(token_str, "<") == 0)
 	{

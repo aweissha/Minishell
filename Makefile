@@ -16,6 +16,7 @@ RM = rm -f
 SRCS = 		$(SRC_DIR)test.c \
 			$(SRC_DIR)error.c \
 			$(SRC_DIR)free.c \
+			$(SRC_DIR)free2.c \
 			$(SRC_DIR)init.c \
 			$(SRC_DIR)lexer.c \
 			$(SRC_DIR)parse_utils.c \
@@ -30,6 +31,7 @@ SRCS = 		$(SRC_DIR)test.c \
 			$(SRC_DIR)env.c \
 			$(SRC_DIR)buildins.c \
 			$(SRC_DIR)syntax_check.c \
+			$(SRC_DIR)syntax_check_utils.c \
 			libft/get_next_line.c \
 			libft/get_next_line_utils.c \
 			# $(SRC_DIR)error.c \

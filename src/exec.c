@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 18:25:30 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/12 18:25:33 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/14 14:55:49 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -362,6 +362,7 @@ void	check_if_buildin(t_node *node, t_data *data)
 void	execution(t_node *node, t_data *data)
 {
 	char	*path;
+	struct stat	dir_check;
 	// char	**cmd;
 
 	check_if_buildin(node, data);
@@ -372,6 +373,13 @@ void	execution(t_node *node, t_data *data)
 	// fprintf(stderr, "execve failed !\n");
 	if (access((path), X_OK) && access((path), W_OK) == 0)
 		exit (126);
+	// if (access((node->command[0]), X_OK) && access((node->command[0]), W_OK) == 0)
+	// 	exit (126);
+	if (stat(path, &dir_check) == 0)
+	{
+		if (S_ISDIR(dir_check.st_mode))
+			exit(126);
+	}
 	exit(127);
 	
 }
@@ -560,16 +568,64 @@ void	exec(t_node *node, t_data *data)
 		execution(node, data);
 }
 
-void	look_4_exit(t_node *node, t_data *data)
+bool	check_exit_syntax(char *cmd)
+{
+	int	i;
+	int	operator_count;
+
+	i = 0;
+	operator_count = 0;
+	while (cmd[i])
+	{
+		if (cmd[i] == '-' || cmd[i] == '+')
+		{
+			operator_count++;
+			if (operator_count > 1)
+				return (false);
+		}
+		else if (cmd[i] == '\'' || cmd[i] == '"')
+			return (false);
+		else if (!ft_isdigit(cmd[i]))
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
+bool	look_4_exit(t_node *node, t_data *data)
 {
 	if (node->node_type == EXEC && node->command[0] != NULL &&
-		ft_strncmp(node->command[0], "exit", 5) == 0
-		&& node->command[1] == NULL)
+		ft_strncmp(node->command[0], "exit", 5) == 0)
 	{
-		free_everything(data);
-		printf("exit\n");
-		exit (0);
+		if (node->command[1] == NULL)
+		{
+			free_everything(data);
+			printf("exit\n");
+			exit (0);
+		}
+		else if (node->command[1] && node->command[2] == NULL)
+		{
+			if (!check_exit_syntax(node->command[1]))
+			{
+				fprintf(stderr, "minishell: exit: %s: numeric argument required\n", node->command[1]);
+				exit (255);
+			}
+			exit (ft_atoi(node->command[1]));
+		}
+		else if (node->command[1] && node->command[2])
+		{
+			if (!check_exit_syntax(node->command[1]))
+			{
+				fprintf(stderr, "minishell: exit: %s: numeric argument required\n", node->command[1]);
+				exit (255);
+			}
+			else
+				fprintf(stderr, "exit\nminishell: exit: too many arguments\n");
+			return (1);
+		}
+		
 	}
+	return (0);
 }
 
 int	look_4_unset(t_node *node, t_data *data)
@@ -590,6 +646,22 @@ int	look_4_unset(t_node *node, t_data *data)
 	return (0);
 }
 
+bool	export_check(char *arg)
+{
+	int	i;
+
+	i = 1;
+	if ((!ft_isalpha(arg[0]) && !(arg[0] == '_')))
+		return (0);
+	while (arg[i] && arg[i] != '=')
+	{
+		if (!ft_isalpha(arg[i]) && !(arg[i] == '_'))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	look_4_export(t_node *node, t_data *data)
 {
 	int	i;
@@ -598,6 +670,10 @@ int	look_4_export(t_node *node, t_data *data)
 	if (node->node_type == EXEC && node->command[0] != NULL &&
 		ft_strncmp(node->command[0], "export", 7) == 0)
 	{
+		if (node->command[1] == NULL)
+			return (1);
+		if (!export_check(node->command[1]))
+			return (-1);
 		while (node->command[i])
 		{
 			export(node->command[i], data);
@@ -610,16 +686,19 @@ int	look_4_export(t_node *node, t_data *data)
 
 int	look_4_buildins(t_node *node, t_data *data)
 {
-	int	r_value;
+	int	cd_value;
+	int	ex_value;
 
-	look_4_exit(node, data);
+	if (look_4_exit(node, data))
+		return (-1);
 	if (look_4_unset(node, data))
 		return (1);
-	if (look_4_export(node ,data))
-		return (1);
-	r_value = look_4_cd(node, data);
-	if (r_value)
-		return (r_value);
+	ex_value = look_4_export(node ,data);
+	if (ex_value)
+		return (ex_value);
+	cd_value = look_4_cd(node, data);
+	if (cd_value)
+		return (cd_value);
 	return (0);
 }
 

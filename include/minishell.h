@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 10:44:13 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/12 13:49:24 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/14 14:59:32 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 #include <limits.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
+
 
 typedef enum
 {
@@ -116,7 +118,7 @@ void	ft_error(char *message, int code);
 
 // expander.c
 int		strlen_expanded(char *str, t_data *data);
-void	create_expanded_str(char *expanded_str, char *original_str, t_data *data);
+void	create_expanded_str(char *exp_str, char *orig_str, t_data *data);
 char	*expand_str(t_token *token, t_data *data);
 void	expander(t_data *data);
 
@@ -134,10 +136,12 @@ int		count_digits(int n);
 
 // free.c
 void	free_token(t_token	*token);
-void	free_token_list(t_token *token_list);
 void	free_env(t_env *env_node);
 void	free_str_array(char **array);
 void	free_node(t_node *node);
+
+// free2.c
+void	free_token_list(t_token *token_list);
 void	free_parse_tree(t_node *node);
 void	free_env_list(t_env *env_list);
 void	free_everything(t_data *data);
@@ -148,7 +152,8 @@ t_data	*init_data(int argc, char **argv, char **env);
 
 // lexer.c
 type	tok_type(char *token_str);
-// char	*ft_strtok_mod(char *str, const char *sep);
+type 	classify_char(char c);
+int		add_token(t_token **token_list, char *str);
 void	lexer(char *input, t_data *data);
 
 // parse_utils.c
@@ -161,6 +166,16 @@ t_node	*parse_exec(t_token *token_list);
 t_node	*parse_redir(t_token *token_list);
 t_node	*parse_pipe(t_token *token_list);
 
+// syntax_check.c
+int		check_operators(t_token *token_list);
+int		check_quotes(t_token *token_list);
+int		syntax_check(t_data *data);
+
+// syntax_check_utils.c
+int		pipe_syntax_check(t_token *token_list);
+int		redir_syntax_check(t_token *token_list);
+int		quotes_wrong(char *str);
+
 // token_list_utils.c
 int		toklist_size(t_token *token_list);
 void	toklist_clear(t_token **token_list);
@@ -171,15 +186,13 @@ void	ft_tokadd_back(t_token **token_list, t_token *new);
 // utils.c
 int		ft_fork(void);
 t_env	*find_var(char *var_name, t_data *data);
+void	set_quote_flags(char *str, int *s_quote_open, int *d_quote_open);
+int		ft_isspace(char c);
 
 //exec.c
 int		pre_exec(t_node *node, t_data *data);
 void	exec(t_node *node, t_data *data);
 void	set_quote_flags(char *str, int *s_quote_open, int *d_quote_open);
 
-// syntax_check.c
-int	quotes_wrong(char *str);
-int	check_quotes(t_token *token_list);
-int	syntax_check(t_data *data);
 
 #endif

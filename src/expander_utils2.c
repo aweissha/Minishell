@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 11:57:18 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/09 11:42:46 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/14 14:23:11 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ t_env	*find_var_expander(char *str, t_data *data)
 	env_list = data->env_list;
 	while (env_list != NULL)
 	{
-	// printf("hello from find_var\n");
 		if (ft_strcmp(var, env_list->var_name) == 0)
 		{
 			free(var);
@@ -42,7 +41,7 @@ int	var_length(char *str)
 	int	i;
 
 	i = 0;
-	while (!( str[i] == ' ' || (str[i] <= 13 && str[i] >= 9))
+	while (!(str[i] == ' ' || (str[i] <= 13 && str[i] >= 9))
 		&& str[i] != '$' && str[i] != '\0'
 		&& str[i] != '\"' && str[i] != '\''
 		&& str[i] != '?')
@@ -71,7 +70,7 @@ int	edit_quote_counters(char *str, int *s_quote_open, int *d_quote_open)
 	}
 	else if (*str == '\'' && *s_quote_open == 1 && *d_quote_open == 0)
 	{
-		*s_quote_open = 0;	
+		*s_quote_open = 0;
 		return (0);
 	}
 	return (1);

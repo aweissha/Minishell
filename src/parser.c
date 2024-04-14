@@ -6,14 +6,15 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:36:48 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/10 15:15:16 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/14 14:20:44 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 /*
-This function sets the node->command variable correct and returns a pointer to an exec node.
+This function sets the node->command variable correct
+and returns a pointer to an exec node.
 */
 t_node	*parse_exec(t_token *token_list)
 {
@@ -21,7 +22,7 @@ t_node	*parse_exec(t_token *token_list)
 	t_node	*exec_node;
 	int		i;
 	t_token	*tmp;
-	
+
 	if (token_list == NULL)
 		return (NULL);
 	nb_tokens = toklist_size(token_list);
@@ -69,7 +70,8 @@ t_node	*parse_redir(t_token *token_list)
 
 /**
 this function returns a pointer to a pipe node.
-for left it calls the parse_redir() function, because left will have no more Pipes,
+for left it calls the parse_redir() function,
+because left will have no more Pipes,
 for right it calls the parse_pipe function again.
 If there is no pipe present, parse_redir is called.
 **/
