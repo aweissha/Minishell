@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 11:07:54 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/14 15:58:58 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/16 18:52:58 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,17 +117,6 @@ int	main(int argc, char **argv, char **env)
 */
 
 
-void    sig_action(int sig)
-{
-    (void)sig;
-    write(1, "\n", 1);
-    rl_replace_line("", 1);
-    rl_on_new_line();
-    rl_redisplay();
-        return ;
-}
-
-
 int	main(int argc, char **argv, char **env)
 {
 	t_data	*data;
@@ -136,13 +125,14 @@ int	main(int argc, char **argv, char **env)
 
 	data = init_data(argc, argv, env);
 	create_env_list(data);
-	
+
+	// // test export (env_sorted funtion)
+	// env_sorted(data);
+	// return (0);
 
 	while (1)
 	{
-		rl_catch_signals = 0;
-        signal(SIGQUIT, SIG_IGN);
-        signal(SIGINT, sig_action);
+		pre_rl_signals();
 		input = readline("\x1b[32mMinishell $> \x1b[0m");
 		if (!input)
 		{
@@ -161,7 +151,7 @@ int	main(int argc, char **argv, char **env)
 			continue ;
 		}
 		expander(data);
-		data->parse_tree = parse_pipe(data->token_list);
+		data->parse_tree = parse_pipe(data->token_list, data);
 		data->token_list = NULL;
 		// test_parse_tree(data->parse_tree);
 		data->last_exit_code = pre_exec(data->parse_tree, data);
@@ -172,8 +162,6 @@ int	main(int argc, char **argv, char **env)
 }
 /*
 To do:
-- exit codes does no work anymore(value in data struct does not get changed)
-- free memory, when command fails (unset PATH->ls)
 - check eval sheet for edge cases
 - clean history
 - check for memory leaks

@@ -30,10 +30,17 @@ SRCS = 		$(SRC_DIR)test.c \
 			$(SRC_DIR)env_list_utils.c \
 			$(SRC_DIR)env.c \
 			$(SRC_DIR)buildins.c \
+			$(SRC_DIR)buildin_utils.c \
 			$(SRC_DIR)syntax_check.c \
 			$(SRC_DIR)syntax_check_utils.c \
 			libft/get_next_line.c \
 			libft/get_next_line_utils.c \
+			$(SRC_DIR)exec_path.c \
+			$(SRC_DIR)exec_redir.c \
+			$(SRC_DIR)signals.c \
+			$(SRC_DIR)exec_env_buildins.c \
+			$(SRC_DIR)exec_print_buildins.c \
+			$(SRC_DIR)exec_cd_buildin.c \
 			# $(SRC_DIR)error.c \
 
 

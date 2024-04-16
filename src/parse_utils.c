@@ -6,11 +6,36 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:22:25 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/14 14:21:00 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/16 12:36:50 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+void	add_command(t_token *token_list, t_node *exec_node, t_data *data)
+{
+	int		nb_tokens;
+	int		i;
+	t_token	*tmp;
+
+	nb_tokens = toklist_size(token_list);
+	exec_node->command = malloc(sizeof(char *) * (nb_tokens + 1));
+	if (exec_node->command == NULL)
+		ft_error_and_free("Memory allocation of command failed\n",
+			errno, data);
+	i = 0;
+	tmp = token_list;
+	while (i < nb_tokens)
+	{
+		exec_node->command[i] = ft_strdup(tmp->token_str);
+		if (exec_node->command[i] == NULL)
+			ft_error_and_free("Memory allocation of command_str failed\n",
+				errno, data);		
+		tmp = tmp->next;
+		i++;
+	}
+	exec_node->command[i] = NULL;
+}
 
 void	update_token_list(t_token **token_list)
 {
@@ -67,7 +92,7 @@ void	config_redir_node(t_token *redir_token, t_node *redir_node)
 	}
 }
 
-t_token	*find_token(t_token	*token_list, type token_type)
+t_token	*find_token(t_token	*token_list, t_type token_type)
 {
 	while (token_list != NULL)
 	{

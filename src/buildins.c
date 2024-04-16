@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 14:34:46 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/12 15:46:17 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/16 18:46:45 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,11 @@ void	export(char *variable, t_data *data)
 	var_str = get_var_str(variable);
 	if ((ft_strlen(var_str) == 0 && ft_strchr(variable, '=') == NULL)
 		|| ft_strlen(var_name) == 0)
-		{
-			free(var_name);
-			free(var_str);
-			return ;
-		}
+	{
+		free(var_name);
+		free(var_str);
+		return ;
+	}
 	var = find_var(var_name, data);
 	if (var != NULL)
 	{
@@ -76,5 +76,19 @@ void	unset(char *variable, t_data *data)
 				env_list = env_list->next;
 			}
 		}
+	}
+}
+
+void	env_sorted(t_data *data)
+{
+	t_env	*env_list;
+	t_env	*var;
+
+	env_list = data->env_list;
+	var = find_lowest_var(env_list);
+	while (var != NULL)
+	{
+		printf("%s=%s\n", var->var_name, var->var_str);
+		var = find_next_higher(var, env_list);
 	}
 }

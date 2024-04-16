@@ -6,17 +6,17 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 11:54:47 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/14 14:25:16 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/16 09:55:06 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	add_strlen(char *str, int *d_quote_open, int *s_quote_open, t_data *data)
+int	add_strlen(char *str, int *d_quote, int *s_quote, t_data *data)
 {
 	t_env	*var;
 
-	if (*str == '$' && *s_quote_open != 1)
+	if (*str == '$' && *s_quote != 1)
 	{
 		str++;
 		var = find_var_expander(str, data);
@@ -31,7 +31,7 @@ int	add_strlen(char *str, int *d_quote_open, int *s_quote_open, t_data *data)
 			return (0);
 	}
 	else
-		return (edit_quote_counters(str, s_quote_open, d_quote_open));
+		return (edit_quote_counters(str, s_quote, d_quote));
 }
 
 int	add_str(char *str, int *s_quote_open)

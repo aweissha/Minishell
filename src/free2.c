@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 13:43:28 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/14 14:22:35 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/16 14:51:49 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,14 @@ void	free_env_list(t_env *env_list)
 
 void	free_everything(t_data *data)
 {
-	free_parse_tree(data->parse_tree);
-	data->parse_tree = NULL;
-	free_env_list(data->env_list);
-	data->env_list = NULL;
-	free(data);
+	if (data != NULL)
+	{
+		free_token_list(data->token_list);
+		data->token_list = NULL;
+		free_parse_tree(data->parse_tree);
+		data->parse_tree = NULL;
+		free_env_list(data->env_list);
+		data->env_list = NULL;
+		free(data);
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:29:47 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/14 12:44:27 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/16 11:46:58 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,27 @@ char	*get_var_name(char *env_line)
 
 void	create_env_list(t_data *data)
 {
-	int	i;
+	int		i;
+	t_env	*new_node;
+	char	*var_str;
+	char	*var_name;
 
 	i = 0;
 	while (data->env[i] != NULL)
 	{
-		env_list_add_back(&data->env_list, env_list_new(get_var_name(data->env[i]), get_var_str(data->env[i])));
+		var_name = get_var_name(data->env[i]);
+		if (var_name == NULL)
+			ft_error_and_free("Memory allocation of var_name failed\n",
+				errno, data);
+		var_str = get_var_str(data->env[i]);
+		if (var_str == NULL)
+			ft_error_and_free("Memory allocation of var_str failed\n",
+				errno, data);
+		new_node = env_list_new(var_name, var_str);
+		if (new_node == NULL)
+			ft_error_and_free("Memory allocation of env_list_node failed\n",
+				errno, data);
+		env_list_add_back(&data->env_list, new_node);
 		i++;
 	}
 }

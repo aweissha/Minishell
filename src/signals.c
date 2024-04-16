@@ -1,38 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strndup.c                                       :+:      :+:    :+:   */
+/*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sparth <sparth@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/14 12:21:30 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/15 12:42:08 by sparth           ###   ########.fr       */
+/*   Created: 2024/04/16 00:17:26 by sparth            #+#    #+#             */
+/*   Updated: 2024/04/16 00:18:09 by sparth           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../include/minishell.h"
 
-static size_t	fstrnlen(char *s1, size_t n)
+
+void	sig_action(int sig)
 {
-	size_t	str_len;
-
-	str_len = ft_strlen(s1);
-	if (str_len < n)
-		return (str_len);
-	else
-		return (n);
+	(void)sig;
+	write(1, "\n", 1);
+	rl_replace_line("", 1);
+	rl_on_new_line();
+	rl_redisplay();
+		return ;
 }
 
-char	*ft_strndup(const char *s1, size_t n)
+void	pre_rl_signals(void)
 {
-	size_t	len;
-	char	*new_str;
+		rl_catch_signals = 0;
+		signal(SIGQUIT, SIG_IGN);
+		signal(SIGINT, sig_action);
+}
 
-	len = fstrnlen((char *)s1, n);
-	new_str = malloc(len + 1);
-	if (new_str == NULL)
-		return (NULL);
-	ft_strncpy(new_str, s1, len);
-	new_str[len] = '\0';
-	return (new_str);
+void	sig_child_int(int sig)
+{
+	(void)sig;
+	exit(1);
+}
+
+void	sig_child_quit(int sig)
+{
+	(void)sig;
+	exit(1);
 }

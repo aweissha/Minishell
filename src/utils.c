@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 13:24:09 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/14 14:18:46 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/16 09:54:32 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,16 +36,16 @@ t_env	*find_var(char *var_name, t_data *data)
 	return (NULL);
 }
 
-void	set_quote_flags(char *str, int *s_quote_open, int *d_quote_open)
+void	set_quote_flags(char *str, int *s_quote, int *d_quote)
 {
-	if (*str == '\"' && *s_quote_open == 0 && *d_quote_open == 0)
-		*d_quote_open = 1;
-	else if (*str == '\'' && *s_quote_open == 0 && *d_quote_open == 0)
-		*s_quote_open = 1;
-	else if (*str == '\"' && *s_quote_open == 0 && *d_quote_open == 1)
-		*d_quote_open = 0;
-	else if (*str == '\'' && *s_quote_open == 1 && *d_quote_open == 0)
-		*s_quote_open = 0;
+	if (*str == '\"' && *s_quote == 0 && *d_quote == 0)
+		*d_quote = 1;
+	else if (*str == '\'' && *s_quote == 0 && *d_quote == 0)
+		*s_quote = 1;
+	else if (*str == '\"' && *s_quote == 0 && *d_quote == 1)
+		*d_quote = 0;
+	else if (*str == '\'' && *s_quote == 1 && *d_quote == 0)
+		*s_quote = 0;
 }
 
 int	ft_isspace(char c)

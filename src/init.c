@@ -6,13 +6,13 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 13:33:18 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/14 14:22:20 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/16 12:35:35 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-t_node	*init_node(type node_type)
+t_node	*init_node(t_type node_type)
 {
 	t_node	*node;
 

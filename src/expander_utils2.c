@@ -6,7 +6,7 @@
 /*   By: aweissha <aweissha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 11:57:18 by aweissha          #+#    #+#             */
-/*   Updated: 2024/04/14 14:23:11 by aweissha         ###   ########.fr       */
+/*   Updated: 2024/04/16 14:56:19 by aweissha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,26 +51,26 @@ int	var_length(char *str)
 	return (i);
 }
 
-int	edit_quote_counters(char *str, int *s_quote_open, int *d_quote_open)
+int	edit_quote_counters(char *str, int *s_quote, int *d_quote)
 {
-	if (*str == '\"' && *s_quote_open == 0 && *d_quote_open == 0)
+	if (*str == '\"' && *s_quote == 0 && *d_quote == 0)
 	{
-		*d_quote_open = 1;
+		*d_quote = 1;
 		return (0);
 	}
-	else if (*str == '\'' && *s_quote_open == 0 && *d_quote_open == 0)
+	else if (*str == '\'' && *s_quote == 0 && *d_quote == 0)
 	{
-		*s_quote_open = 1;
+		*s_quote = 1;
 		return (0);
 	}
-	else if (*str == '\"' && *s_quote_open == 0 && *d_quote_open == 1)
+	else if (*str == '\"' && *s_quote == 0 && *d_quote == 1)
 	{
-		*d_quote_open = 0;
+		*d_quote = 0;
 		return (0);
 	}
-	else if (*str == '\'' && *s_quote_open == 1 && *d_quote_open == 0)
+	else if (*str == '\'' && *s_quote == 1 && *d_quote == 0)
 	{
-		*s_quote_open = 0;
+		*s_quote = 0;
 		return (0);
 	}
 	return (1);
